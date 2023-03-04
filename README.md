@@ -28,10 +28,25 @@ buildscript {
     }
     dependencies {
         classpath "com.sap.cx.boosters:easy-plugin:0.0.1"
+        classpath group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.7.1'   
     }
 }
 
+plugins {
+    id 'groovy'
+}
+
+repositories {
+    mavenCentral()
+}
+
 apply plugin: 'com.sap.cx.boosters.easy-plugin'
+
+easyConfig {
+    baseUrl = 'https://localhost:9002'
+    repository = 'easy-extension-samples'       
+    extension = 'helloWorld'  
+}
 ```
 - Run the command `gradle create`
 

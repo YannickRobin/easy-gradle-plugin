@@ -2,11 +2,6 @@ buildscript {
     repositories {
         mavenCentral()
     }
-    dependencies {
-        classpath group: 'org.ajoberstar.grgit', name: 'grgit-core', version: '4.1.1'
-        classpath group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.5.5'
-        classpath group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.7.1'
-    }
 }
 
 plugins {
