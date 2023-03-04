@@ -8,8 +8,6 @@ The objective of this plugin is to:
 - Run Groovy Tests
 - Generate Easy Type models
 
-!!! In development, not ready yet
-
 # How to build the plugin
 - Install Gradle 7.6
 - Clone this repository
@@ -57,3 +55,14 @@ Create extension 'myEasyExtension' ...
 BUILD SUCCESSFUL in 418ms
 1 actionable task: 1 executed
 ```
+
+# Tasks
+The following tasks are available:
+
+| Task | Description |
+| ------------- | ------------- |
+| create  | Create a new extension (not implemented yet)  |
+| update  | Update the repository |
+| list  | List existing extensions |
+| install  | Install the extension |
+| uninstall  | Uninstall the extension |
