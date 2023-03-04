@@ -4,7 +4,7 @@ This is a Gradle plugin for Easy Extensibility Framework for SAP Commerce.
 
 The objective of this plugin is to:
 - Create an Easy extension by scaffolding
-- Install/unstall extension use Easy REST API
+- Install/update/unstall extension use Easy REST API
 - Run Groovy Tests
 - Generate Easy Type models
 
