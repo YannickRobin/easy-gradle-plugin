@@ -1,0 +1,16 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'groovy'
+}
+
+group 'com.sap.cx.boosters'
+version '0.0.1'
+
+gradlePlugin {
+    plugins {
+        simplePlugin {
+            id = 'com.sap.cx.boosters.easy-plugin'
+            implementationClass = 'EasyPlugin'
+        }
+    }
+}
