@@ -46,7 +46,7 @@ apply plugin: 'com.sap.cx.boosters.easy-plugin'
 easyConfig {
     baseUrl = 'https://localhost:9002'
     repository = 'easy-extension-samples'       
-    extension = 'helloworld'  
+    extension = project.name  
 }
 ```
 - Run the command `./gradlew list` to list all extension available in the repository
