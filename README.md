@@ -49,13 +49,24 @@ easyConfig {
     extension = 'helloworld'  
 }
 ```
-- Run the command `gradle list` to list all extension available in the repository
+- Run the command `./gradlew list` to list all extension available in the repository
 
-```
-> Task :create
-Create extension 'myEasyExtension' ...
+``` 
 
-BUILD SUCCESSFUL in 418ms
+> Task :list
+Welcome to Easy Gradle Plugin
+
+SAP Commerce Base URL: https://localhost:9002
+Repository: easy-extension-samples
+Extension: my-easy-extension
+
+List extensions...
+API call successfull. HTTP status: 200
+[extensions:[[
+
+...
+
+BUILD SUCCESSFUL in 608ms
 1 actionable task: 1 executed
 ```
 
