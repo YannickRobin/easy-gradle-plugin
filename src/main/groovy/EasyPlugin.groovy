@@ -12,9 +12,13 @@ interface EasyPluginExtension {
 class EasyPlugin implements Plugin<Project> {
     void apply(Project project) {
         def easyConfig = project.extensions.create('easyConfig', EasyPluginExtension)
-        easyConfig.baseUrl.convention('https://localhost:9002')
-        easyConfig.repository.convention('easy-extension-samples')        
-        easyConfig.extension.convention('helloWorld')
+        //easyConfig.baseUrl.convention('https://localhost:9002')
+        //easyConfig.repository.convention('easy-extension-samples')        
+        //easyConfig.extension.convention('helloWorld')
+
+        easyConfig.baseUrl.set(System.env.EASY_BASE_URL ?: 'https://localhost:9002')
+        easyConfig.repository.set(System.env.EASY_REPOSITORY ?: 'easy-extension-samples')
+        easyConfig.extension.set(project.name)               
 
         project.task('easy-help') {
             doLast {
