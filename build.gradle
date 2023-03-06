@@ -14,14 +14,14 @@ group 'com.sap.cx.boosters'
 version '0.0.1'
 
 gradlePlugin {
-    website = 'https://github.com/YannickRobin/EasyGradlePlugin'
-    vcsUrl = 'https://github.com/YannickRobin/EasyGradlePlugin'    
+    website = 'https://github.com/YannickRobin/easy-gradle-plugin'
+    vcsUrl = 'https://github.com/YannickRobin/easy-gradle-plugin'    
     plugins {
-        simplePlugin {
+        easyPlugin {
             id = 'io.github.yannickrobin.easyplugin'
             implementationClass = 'com.sap.cx.boosters.easy.gradleplugin.EasyPlugin'
-            displayName = 'Easy framework for SAP Commerce Cloud plugin'
-            description = 'This plugin is used to manage easy extension as part Easy Framwork for SAP Commerce Cloud'
+            displayName = 'Easy Gradle  Plugin for SAP Commerce'
+            description = 'This plugin is used to manage Easy extensions as part of Easy Framwork for SAP Commerce Cloud'
             tags.set(['easy', 'SAP', 'Commerce', 'plugin'])            
         }
     }
