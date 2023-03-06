@@ -8,8 +8,6 @@ The objective of this plugin is to:
 - Run Groovy Tests
 - Generate Easy Type models
 
-!!! In development, not ready yet
-
 # How to build the plugin
 - Install Gradle 7.6
 - Clone this repository
@@ -18,9 +16,12 @@ The objective of this plugin is to:
 The build will generate the following jar `build/libs/easy-plugin-0.0.1.jar`
 
 # How to test the plugin
-- Create a new folder
-- Create a `lib` folder inside and add `easy-plugin-0.0.1.jar`
-- Create a file called `build.gradle` with the following content
+In this example, we will create a new extension called `helloworld`:
+- `mkdir helloworld`
+- `cd helloworld`
+- Run the command `gradle init --type basic --project-name helloworld`
+- Create a `lib` folder and add `easy-plugin-0.0.1.jar`
+- Copy the following content into `build.gradle`
 ```
 buildscript {
     repositories {
@@ -45,15 +46,37 @@ apply plugin: 'com.sap.cx.boosters.easy-plugin'
 easyConfig {
     baseUrl = 'https://localhost:9002'
     repository = 'easy-extension-samples'       
-    extension = 'helloWorld'  
+    extension = project.name  
 }
 ```
-- Run the command `gradle create`
+- Run the command `./gradlew list` to list all extension available in the repository
 
-```
-> Task :create
-Create extension 'myEasyExtension' ...
+``` 
 
-BUILD SUCCESSFUL in 418ms
+> Task :list
+Welcome to Easy Gradle Plugin
+
+SAP Commerce Base URL: https://localhost:9002
+Repository: easy-extension-samples
+Extension: my-easy-extension
+
+List extensions...
+API call successfull. HTTP status: 200
+[extensions:[[
+
+...
+
+BUILD SUCCESSFUL in 608ms
 1 actionable task: 1 executed
 ```
+
+# Tasks
+The following tasks are available:
+
+| Task | Description |
+| ------------- | ------------- |
+| generate  | Create a new extension (not implemented yet)  |
+| update  | Update the repository |
+| list  | List existing extensions |
+| install  | Install the extension |
+| uninstall  | Uninstall the extension |
