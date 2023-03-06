@@ -42,13 +42,21 @@ repositories {
 }
 
 apply plugin: 'com.sap.cx.boosters.easy-plugin'
-
-easyConfig {
-    baseUrl = 'https://localhost:9002'
-    repository = 'easy-extension-samples'       
-    extension = project.name  
-}
 ```
+
+- Set the following environment variables
+
+| Environment Variable | Description |
+| ------------- | ------------- |
+| EASY_BASE_URL  | The base URL of your SAP Commerce Cloud server |
+| EASY_REPOSITORY  | The Easy Repository configured in SAP Commerce Cloud |
+
+Below is an example.
+```
+export EASY_BASE_URL=http://localhost:9002
+export EASY_REPOSITORY=easy-extension-samples
+```
+
 - Run the command `./gradlew list` to list all extension available in the repository
 
 ``` 
