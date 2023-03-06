@@ -7,16 +7,22 @@ buildscript {
 plugins {
     id 'java-gradle-plugin'
     id 'groovy'
+    id 'com.gradle.plugin-publish' version '1.1.0'
 }
 
 group 'com.sap.cx.boosters'
 version '0.0.1'
 
 gradlePlugin {
+    website = 'https://github.com/YannickRobin/EasyGradlePlugin'
+    vcsUrl = 'https://github.com/YannickRobin/EasyGradlePlugin'    
     plugins {
         simplePlugin {
-            id = 'com.sap.cx.boosters.easy-plugin'
-            implementationClass = 'com.sap.cx.boosters.easyplugin.EasyPlugin'
+            id = 'io.github.yannickrobin.easyplugin'
+            implementationClass = 'com.sap.cx.boosters.easy.gradleplugin.EasyPlugin'
+            displayName = 'Easy framework for SAP Commerce Cloud plugin'
+            description = 'This plugin is used to manage easy extension as part Easy Framwork for SAP Commerce Cloud'
+            tags.set(['easy', 'SAP', 'Commerce', 'plugin'])            
         }
     }
 }
