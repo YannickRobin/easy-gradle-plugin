@@ -78,13 +78,15 @@ BUILD SUCCESSFUL in 608ms
 1 actionable task: 1 executed
 ```
 
-# Tasks
-The following tasks are available:
+# Other tasks
+- Run the command `./gradlew tasks` to see all the task available with this plugin
 
-| Task | Description |
-| ------------- | ------------- |
-| generate  | Create a new extension (not implemented yet)  |
-| update  | Update the repository |
-| list  | List existing extensions |
-| install  | Install the extension |
-| uninstall  | Uninstall the extension |
+```
+Easy tasks
+----------
+initEasyExtension - Init extension
+installEasyExtension - Install extension
+listEasyExtensions - List extensions
+uninstallEasyExtension - Uninstall extension
+updateEasyRepository - Update repository
+```
