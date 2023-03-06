@@ -1,4 +1,4 @@
-package com.sap.cx.boosters.easyplugin
+package com.sap.cx.boosters.easy.gradleplugin
 
 import org.gradle.api.provider.Property
 

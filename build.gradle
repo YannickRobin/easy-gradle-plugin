@@ -10,7 +10,7 @@ plugins {
     id 'com.gradle.plugin-publish' version '1.1.0'
 }
 
-group 'com.sap.cx.boosters'
+group 'io.github.yannickrobin'
 version '0.0.1'
 
 gradlePlugin {

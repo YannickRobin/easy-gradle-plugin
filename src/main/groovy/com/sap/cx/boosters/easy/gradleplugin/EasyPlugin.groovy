@@ -1,10 +1,10 @@
-package com.sap.cx.boosters.easyplugin
+package com.sap.cx.boosters.easy.gradleplugin
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import groovyx.net.http.RESTClient
 
-import com.sap.cx.boosters.easyplugin.tasks.*
+import com.sap.cx.boosters.easy.gradleplugin.tasks.*
 
 class EasyPlugin implements Plugin<Project> {
 
