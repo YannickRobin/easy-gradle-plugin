@@ -57,11 +57,11 @@ export EASY_BASE_URL=http://localhost:9002
 export EASY_REPOSITORY=easy-extension-samples
 ```
 
-- Run the command `./gradlew list` to list all extension available in the repository
+- Run the command `./gradlew listEasyExtensions` to list all extension available in the repository
 
 ``` 
 
-> Task :list
+> Task :listEasyExtensions
 Welcome to Easy Gradle Plugin
 
 SAP Commerce Base URL: https://localhost:9002
@@ -78,13 +78,15 @@ BUILD SUCCESSFUL in 608ms
 1 actionable task: 1 executed
 ```
 
-# Tasks
-The following tasks are available:
+# Other tasks
+- Run the command `./gradlew tasks` to see all the task available with this plugin
 
-| Task | Description |
-| ------------- | ------------- |
-| generate  | Create a new extension (not implemented yet)  |
-| update  | Update the repository |
-| list  | List existing extensions |
-| install  | Install the extension |
-| uninstall  | Uninstall the extension |
+```
+Easy tasks
+----------
+initEasyExtension - Init extension
+installEasyExtension - Install extension
+listEasyExtensions - List extensions
+uninstallEasyExtension - Uninstall extension
+updateEasyRepository - Update repository
+```
