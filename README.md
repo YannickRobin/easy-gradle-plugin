@@ -57,11 +57,11 @@ export EASY_BASE_URL=http://localhost:9002
 export EASY_REPOSITORY=easy-extension-samples
 ```
 
-- Run the command `./gradlew list` to list all extension available in the repository
+- Run the command `./gradlew listEasyExtensions` to list all extension available in the repository
 
 ``` 
 
-> Task :list
+> Task :listEasyExtensions
 Welcome to Easy Gradle Plugin
 
 SAP Commerce Base URL: https://localhost:9002
