@@ -28,7 +28,7 @@ buildscript {
         flatDir dirs: "lib"
     }
     dependencies {
-        classpath "com.sap.cx.boosters:easy-plugin:0.0.1"
+        classpath "io.github.yannickrobin:easy-plugin:0.0.1"
         classpath group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.7.1'   
     }
 }
