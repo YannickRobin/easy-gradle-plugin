@@ -21,8 +21,8 @@ gradlePlugin {
             id = 'io.github.yannickrobin.easyplugin'
             implementationClass = 'com.sap.cx.boosters.easy.gradleplugin.EasyPlugin'
             displayName = 'Easy Gradle  Plugin for SAP Commerce'
-            description = 'This plugin is used to manage Easy extensions as part of Easy Framwork for SAP Commerce Cloud'
-            tags.set(['easy', 'SAP', 'Commerce', 'plugin'])            
+            description = 'This plugin is used to manage Easy extensions as part of Easy Framework for SAP Commerce Cloud'
+            tags.set(['easy', 'SAP', 'Commerce'])            
         }
     }
 }
