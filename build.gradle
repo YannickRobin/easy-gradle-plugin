@@ -16,7 +16,7 @@ gradlePlugin {
     plugins {
         simplePlugin {
             id = 'com.sap.cx.boosters.easy-plugin'
-            implementationClass = 'EasyPlugin'
+            implementationClass = 'com.sap.cx.boosters.easyplugin.EasyPlugin'
         }
     }
 }
