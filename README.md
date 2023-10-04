@@ -8,13 +8,6 @@ The objective of this plugin is to:
 - Run Groovy Tests
 - Generate Easy Type models
 
-# How to build the plugin
-- Install Gradle 7.6
-- Clone this repository
-- Run the command `gradle build`
-
-The build will generate the following jar `build/libs/easy-plugin-0.0.1.jar`
-
 # How to test the plugin
 In this example, we will create a new extension called `helloworld`:
 - `mkdir helloworld`
@@ -91,11 +84,4 @@ installEasyExtension - Install extension
 listEasyExtensions - List extensions
 uninstallEasyExtension - Uninstall extension
 updateEasyRepository - Update repository
-```
-# How to publish
-
-Publish the plugin by using the `publishPlugin` task.
-
-```
-gradle publishPlugins -Pgradle.publish.key=<key> -Pgradle.publish.secret=<secret>
 ```
