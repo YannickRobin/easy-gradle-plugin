@@ -6,4 +6,5 @@ interface EasyPluginExtension {
     Property<String> getBaseUrl()
     Property<String> getRepository()
     Property<String> getExtension()
+    Property<String> getApiKey()    
 }

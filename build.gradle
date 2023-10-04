@@ -11,7 +11,7 @@ plugins {
 }
 
 group 'io.github.yannickrobin'
-version '0.0.1'
+version '0.0.2-SNAPSHOT'
 
 gradlePlugin {
     website = 'https://github.com/YannickRobin/easy-gradle-plugin'
@@ -20,7 +20,7 @@ gradlePlugin {
         easyPlugin {
             id = 'io.github.yannickrobin.easyplugin'
             implementationClass = 'com.sap.cx.boosters.easy.gradleplugin.EasyPlugin'
-            displayName = 'Easy Gradle  Plugin for SAP Commerce'
+            displayName = 'Gradle  Plugin for Easy, Runtime Add-on Framework for SAP Commerce Cloud'
             description = 'This plugin is used to manage Easy extensions as part of Easy Framework for SAP Commerce Cloud'
             tags.set(['easy', 'SAP', 'Commerce'])            
         }
@@ -33,4 +33,6 @@ repositories {
 
 dependencies {
     implementation 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+    implementation 'com.github.spullara.mustache.java:compiler:0.9.10'
+    //implementation 'com.github.spullara.mustache.java:interpreter:0.9.10'    
 }

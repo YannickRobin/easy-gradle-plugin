@@ -13,6 +13,7 @@ class EasyPlugin implements Plugin<Project> {
 
         myEasyConfig.baseUrl.set(System.env.EASY_BASE_URL ?: 'https://localhost:9002')
         myEasyConfig.repository.set(System.env.EASY_REPOSITORY ?: 'easy-extension-samples')
+        myEasyConfig.apiKey.set(System.env.EASY_API_KEY ?: '')
         myEasyConfig.extension.set(project.name)
 
         project.tasks.register('updateEasyRepository', UpdateRepositoryTask) {
