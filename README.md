@@ -41,7 +41,7 @@ repositories {
     mavenCentral()
 }
 
-apply plugin: 'com.sap.cx.boosters.easy-plugin'
+apply plugin: 'io.github.yannickrobin.easyplugin'
 ```
 
 - Set the following environment variables
@@ -50,11 +50,13 @@ apply plugin: 'com.sap.cx.boosters.easy-plugin'
 | ------------- | ------------- |
 | EASY_BASE_URL  | The base URL of your SAP Commerce Cloud server |
 | EASY_REPOSITORY  | The Easy Repository configured in SAP Commerce Cloud |
+| EASY_API_KEY  | `easy.apiKey` property configured in SAP Commerce Cloud (by default, this is 123456) |
 
 Below is an example.
 ```
 export EASY_BASE_URL=http://localhost:9002
 export EASY_REPOSITORY=easy-extension-samples
+export EASY_API_KEY=123456
 ```
 
 - Run the command `./gradlew listEasyExtensions` to list all extension available in the repository
