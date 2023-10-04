@@ -1,4 +1,4 @@
-# Documentation for Easy Gradle Plugin developers
+# Documentation for developers
 
 # How to build the plugin
 - Install Gradle 7.6
