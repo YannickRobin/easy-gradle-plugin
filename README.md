@@ -41,7 +41,7 @@ repositories {
     mavenCentral()
 }
 
-apply plugin: 'com.sap.cx.boosters.easy-plugin'
+apply plugin: 'io.github.yannickrobin.easyplugin'
 ```
 
 - Set the following environment variables
