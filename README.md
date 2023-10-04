@@ -13,7 +13,7 @@ In this example, we will create a new extension called `helloworld`:
 - `mkdir helloworld`
 - `cd helloworld`
 - Run the command `gradle init --type basic --project-name helloworld`
-- Create a `lib` folder and add `easy-plugin-0.0.1.jar`
+- Create a `lib` folder and add `easy-plugin-0.0.2.jar`
 - Copy the following content into `build.gradle`
 ```
 buildscript {
@@ -21,7 +21,7 @@ buildscript {
         flatDir dirs: "lib"
     }
     dependencies {
-        classpath "io.github.yannickrobin:easy-plugin:0.0.1"
+        classpath "io.github.yannickrobin:easy-plugin:0.0.2"
         classpath group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.7.1'   
     }
 }
