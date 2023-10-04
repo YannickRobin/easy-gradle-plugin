@@ -13,28 +13,16 @@ In this example, we will create a new extension called `helloworld`:
 - `mkdir helloworld`
 - `cd helloworld`
 - Run the command `gradle init --type basic --project-name helloworld`
-- Create a `lib` folder and add `easy-plugin-0.0.2.jar`
 - Copy the following content into `build.gradle`
 ```
-buildscript {
-    repositories {
-        flatDir dirs: "lib"
-    }
-    dependencies {
-        classpath "io.github.yannickrobin:easy-plugin:0.0.2"
-        classpath group: 'org.codehaus.groovy.modules.http-builder', name: 'http-builder', version: '0.7.1'   
-    }
-}
-
 plugins {
     id 'groovy'
+    id "io.github.yannickrobin.easyplugin" version "0.0.2"
 }
 
 repositories {
     mavenCentral()
 }
-
-apply plugin: 'io.github.yannickrobin.easyplugin'
 ```
 
 - Set the following environment variables
