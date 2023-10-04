@@ -92,3 +92,10 @@ listEasyExtensions - List extensions
 uninstallEasyExtension - Uninstall extension
 updateEasyRepository - Update repository
 ```
+# How to publish
+
+Publish the plugin by using the `publishPlugin` task.
+
+```
+gradle publishPlugins -Pgradle.publish.key=<key> -Pgradle.publish.secret=<secret>
+```
