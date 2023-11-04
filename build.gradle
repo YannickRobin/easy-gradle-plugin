@@ -34,5 +34,10 @@ repositories {
 dependencies {
     implementation 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
     implementation 'com.github.spullara.mustache.java:compiler:0.9.10'
-    //implementation 'com.github.spullara.mustache.java:interpreter:0.9.10'    
+    // implementation 'com.github.spullara.mustache.java:interpreter:0.9.10'
+    testImplementation 'org.spockframework:spock-core:2.3-groovy-3.0'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }
