@@ -16,16 +16,15 @@ class EasyPlugin implements Plugin<Project> {
         myEasyConfig.apiKey.set(System.env.EASY_API_KEY ?: '')
         myEasyConfig.extension.set(project.name)
 
+        def extensionHelper = new CommerceExtensionHelper(project.logger)
+
         // add source folder for models
         if (project.plugins.hasPlugin('groovy')) {
             project.sourceSets.main.groovy.srcDirs += 'gensrc/models/groovy'
         }
 
         // add commerce libraries
-        if (project.hasProperty('commercePlatformHome')) {
-            def commercePlatformHome = EasyPluginUtil.resolveHome(project.properties['commercePlatformHome'] as String)
-            project.extensions.add('commercePlatformLibraries', project.files(EasyPluginUtil.buildPlatformClassPath(commercePlatformHome)))
-        }
+        project.extensions.add('commercePlatformLibraries', project.files(extensionHelper.buildPlatformClassPath(project)))
 
         project.tasks.register('updateEasyRepository', UpdateRepositoryTask) {
             group 'Easy'
@@ -38,20 +37,28 @@ class EasyPlugin implements Plugin<Project> {
             description 'List extensions'
             easyConfig = myEasyConfig      
         }
+
         project.tasks.register('initEasyExtension', InitExtensionTask) {
             group 'Easy'
             description 'Init extension'            
             easyConfig = myEasyConfig      
-        }        
+        }
+
         project.tasks.register('installEasyExtension', InstallExtensionTask) {
             group 'Easy'
             description 'Install extension'            
             easyConfig = myEasyConfig      
         }
+
         project.tasks.register('uninstallEasyExtension', UninstallExtensionTask) {
             group 'Easy'
             description 'Uninstall extension'            
             easyConfig = myEasyConfig      
+        }
+
+        project.tasks.register('dumpPlatformClassPath', DumpPlatformClassPathTask) {
+            group 'Easy'
+            description 'Dump Platform Classpath'
         }
 
     }

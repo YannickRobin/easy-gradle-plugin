@@ -15,22 +15,17 @@ abstract class AbstractEasyTask extends DefaultTask {
     protected String apiKey;
     protected RESTClient restClient;
 
-    public void init(String initMessage)
-    {
+    void init(String initMessage) {
         init(initMessage, false)
     }
 
-    public void init(String initMessage, boolean eventEnabled)
-    {
+    void init(String initMessage, boolean eventEnabled) {
         displayEasyConfigInfo()
-
         println initMessage
-
         setRestClient(eventEnabled)
     }       
 
-    private void displayEasyConfigInfo()
-    {
+    private void displayEasyConfigInfo() {
         println "Welcome to Easy Gradle Plugin\n"
         println "SAP Commerce Base URL: ${easyConfig.baseUrl.get()}"
         println "Repository: ${easyConfig.repository.get()}"
@@ -54,6 +49,7 @@ abstract class AbstractEasyTask extends DefaultTask {
             def prettyData = JsonOutput.prettyPrint(jsonData)                      
             println "$prettyData";
         }
+
         restClient.handler.success = {def response, def data ->
             println "API call successfull. HTTP status: $response.status"   
             def jsonData = JsonOutput.toJson(data)
