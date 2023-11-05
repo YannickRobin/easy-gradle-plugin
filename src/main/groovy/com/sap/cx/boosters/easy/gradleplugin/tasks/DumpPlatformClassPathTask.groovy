@@ -1,6 +1,7 @@
 package com.sap.cx.boosters.easy.gradleplugin.tasks
 
-import com.sap.cx.boosters.easy.gradleplugin.CommerceExtensionHelper
+import com.sap.cx.boosters.easy.gradleplugin.CommerceExtensionUtil
+import com.sap.cx.boosters.easy.gradleplugin.EasyPlugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
@@ -8,11 +9,7 @@ class DumpPlatformClassPathTask extends DefaultTask {
 
     @TaskAction
     def dumpClassPath() {
-        def extHelper = new CommerceExtensionHelper(this.logger)
-        def commercePlatformHome = this.project.properties['commercePlatformHome']
-        logger.info "commercePlatformHome: $commercePlatformHome"
-        logger.info "commercePlatformHome: ${extHelper.resolveHome(commercePlatformHome)}"
-        def classPath = extHelper.buildPlatformClassPath(this.getProject())
+        def classPath = CommerceExtensionUtil.buildPlatformClassPath(this.project.properties[EasyPlugin.PROP_COMMERCE_PLATFORM_HOME])
         classPath.each {println it.canonicalPath}
     }
 

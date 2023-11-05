@@ -1,29 +1,17 @@
 package com.sap.cx.boosters.easy.gradleplugin
 
 import org.gradle.api.Project
-import org.gradle.api.logging.Logger
+import org.slf4j.Logger
 
 import java.nio.file.Path
 
-class CommerceExtensionHelper {
+import org.slf4j.LoggerFactory
 
-    Logger logger
+class CommerceExtensionUtil {
 
-    CommerceExtensionHelper(Logger logger) {
-        this.logger = logger
-    }
+    private static Logger LOG = LoggerFactory.getLogger(CommerceExtensionUtil)
 
-    Set<File> buildPlatformClassPath(Project project) {
-
-        if (!project.hasProperty('commercePlatformHome')) {
-            logger.warn "no commerce platform home is set, specify commercePlatformHome in gradle.properties file"
-        }
-
-        return buildPlatformClassPath(project.properties['commercePlatformHome'] as String)
-
-    }
-
-    Set<File> buildPlatformClassPath(String commercePlatformHome) {
+    static Set<File> buildPlatformClassPath(String commercePlatformHome) {
 
         def classPath = [] as Set<File>
 
@@ -35,13 +23,13 @@ class CommerceExtensionHelper {
         def commercePlatformDirectory = new File(commerceHomeDirectory,'bin/platform')
 
         if (!commercePlatformDirectory.exists()) {
-            logger.error "commerce platform dir not found ${commercePlatformDirectory.absolutePath}"
+            LOG.error "commerce platform dir not found ${commercePlatformDirectory.absolutePath}"
             return classPath
         }
 
         def localExtensionsFile = new File(commerceHomeDirectory,'config/localextensions.xml')
         if (!localExtensionsFile.exists()) {
-            logger.error "no localextensions.xml file found ${localExtensionsFile.absolutePath}"
+            LOG.error "no localextensions.xml file found ${localExtensionsFile.absolutePath}"
             return classPath
         }
 
@@ -58,7 +46,7 @@ class CommerceExtensionHelper {
 
         extensions.each{info ->
 
-            logger.debug "adding classpath for extension: ${info.name}"
+            LOG.debug "adding classpath for extension: ${info.name}"
             def extBinDir = new File(info.rootPath,'bin')
             if (extBinDir.exists()) classPath.addAll(extBinDir.listFiles(jarFilter))
 
@@ -73,13 +61,13 @@ class CommerceExtensionHelper {
 
         }
 
-        classPath.each{it -> logger.debug it.canonicalPath}
+        classPath.each{it -> LOG.debug it.canonicalPath}
 
         classPath
 
     }
 
-    Set<CommerceExtensionInfo> getExtensions(File localExtensionsFile) {
+    static Set<CommerceExtensionInfo> getExtensions(File localExtensionsFile) {
 
         def xmlParser = new groovy.xml.XmlSlurper()
         def templateEngine = new groovy.text.GStringTemplateEngine()
@@ -94,7 +82,7 @@ class CommerceExtensionHelper {
             def extensionPath = new File(templateEngine.createTemplate(path).make(bindMap).toString())
             extensionPath.traverse(type: groovy.io.FileType.FILES, nameFilter: 'extensioninfo.xml', maxDepth: 3) {
 
-                logger.debug "parsing extensioninfo file: ${it}"
+                LOG.debug "parsing extensioninfo file: ${it}"
 
                 def extensioninfo = xmlParser.parse(it)
                 def extensionName = extensioninfo.extension[0].'@name'.text()
@@ -120,7 +108,7 @@ class CommerceExtensionHelper {
         def paths = hybrisConfig.extensions[0].path.collect{it.'@dir'.text()} as List<String>
 
         paths.each{path ->
-            logger.debug "searching extensions in path: ${path}"
+            LOG.debug "searching extensions in path: ${path}"
             allExtensions.addAll(scanPath(path))
         }
 
@@ -134,13 +122,13 @@ class CommerceExtensionHelper {
 
         def add
         add = {String extName ->
-            logger.debug "adding configured extension: ${extName}"
+            LOG.debug "adding configured extension: ${extName}"
             def extInfo = allExtensionsMap[extName]
             if (extInfo) {
                 if (requiredExtensions.add(extInfo)) {
                     if (allExtensionsMap[extName] && allExtensionsMap[extName].requires) {
                         allExtensionsMap[extName].requires.each{require ->
-                            logger.debug "sdding required extension: ${require}"
+                            LOG.debug "adding required extension: ${require}"
                             // NOTE trampoline doesn't to work here
                             // add.trampoline(require)
                             add(require)
@@ -148,7 +136,7 @@ class CommerceExtensionHelper {
                     }
                 }
             } else {
-                logger.warn "skipped invalid extension ${extName}"
+                LOG.warn "skipped invalid extension ${extName}"
             }
         }
 
@@ -158,7 +146,7 @@ class CommerceExtensionHelper {
 
     }
 
-    String resolveHome(String path) {
+    static String resolveHome(String path) {
         path.replace('~',System.getProperty('user.home'))
     }
 

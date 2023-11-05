@@ -9,7 +9,7 @@ class EasyPluginTests extends Specification {
 
         when:
         def localExtensionsFile = '~/SAPDevelop/hybris/hybris-2211-easy/hybris/config/localextensions.xml'
-        def commerceExtensionHelper = new CommerceExtensionHelper(LoggerFactory.getLogger('spock-tests'))
+        def commerceExtensionHelper = new CommerceExtensionUtil()
         def extensions = commerceExtensionHelper.getExtensions(new File(commerceExtensionHelper.resolveHome(localExtensionsFile)))
         extensions.each {println it.name}
         println "extension founds: ${extensions.size()}"
