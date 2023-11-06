@@ -1,6 +1,5 @@
 package com.sap.cx.boosters.easy.gradleplugin
 
-import org.gradle.api.Project
 import org.slf4j.Logger
 
 import java.nio.file.Path
