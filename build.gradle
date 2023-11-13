@@ -8,8 +8,12 @@ plugins {
     id 'java-gradle-plugin'
     id 'groovy'
     id 'com.gradle.plugin-publish' version '1.1.0'
+    id 'com.jfrog.artifactory' version '5.+'
 }
 
+// maven coordinates, artifactId corresponds to the name of the project that corresponds to
+// to the rootProject.name in settings.gradle
+// or the name of the root folder of the plugin project
 group 'io.github.yannickrobin'
 version '0.0.3-SNAPSHOT'
 
@@ -29,6 +33,31 @@ gradlePlugin {
 
 repositories {
     mavenCentral()
+
+}
+
+artifactory {
+    publish {
+        // Define the Artifactory URL for publishing artifacts
+        contextUrl = 'https://int.repositories.cloud.sap/artifactory'
+        // contextUrl = 'https://common.repositories.cloud.sap/artifactory'
+        // Define the project repository to which the artifacts will be published
+        repository {
+            // TESTME: here we need to check if a user
+            // Set the Artifactory repository key
+            // It works only
+            repoKey = System.getenv('USER').uncapitalize()
+            // Specify the publisher username
+            username = System.getenv('USER')
+            // Provide the publisher password
+            password = sapIntRepositoryPassword
+            // password = sapRepositoryPassword
+        }
+        // Include all configured publications for all the modules
+        defaults {
+            publications('ALL_PUBLICATIONS')
+        }
+    }
 }
 
 dependencies {

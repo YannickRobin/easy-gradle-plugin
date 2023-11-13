@@ -1,0 +1,60 @@
+// https://www.tothenew.com/blog/gdsl-awesomeness-introduction-to-gdsl-in-intellij-idea/
+def easyDSL = context(ctype: 'groovy.lang.GroovyObject', scope: scriptScope(name: '.*.groovy'))
+
+contributor(easyDSL) {
+
+    property name: 'abstractJobPerformable', type: 'de.hybris.platform.servicelayer.cronjob.AbstractJobPerformable'
+    property name: 'cronJobService', type: 'de.hybris.platform.servicelayer.cronjob.CronJobService'
+    // property name: 'configurationService', type: 'de.hybris.platform.servicelayer.config.ConfigurationService'
+    // property name: 'flexibleSearchService', type: 'de.hybris.platform.servicelayer.search.FlexibleSearchService'
+    // property name: 'modelService', type: 'de.hybris.platform.servicelayer.model.ModelService'
+    // property name: 'typeService', type: 'de.hybris.platform.servicelayer.type.TypeService'
+    // property name: 'userService', type: 'de.hybris.platform.servicelayer.user.UserService'
+    // property name: 'authenticationService', type: 'de.hybris.platform.servicelayer.security.auth.AuthenticationService'
+    // property name: 'logsMetricsReporterService', type: 'de.hybris.platform.metrics.dropwizard.MetricsReporterService'
+    // property name: 'fakeService', type: 'de.hybris.platform.servicelayer.FakeService'
+    // property name: 'jdbcTemplate', type: 'org.springframework.jdbc.core.JdbcTemplate'
+    // property name: 'importService', type: 'de.hybris.platform.servicelayer.impex.ImportService'
+    // property name: 'exportService', type: 'de.hybris.platform.servicelayer.impex.ExportService'
+    // property name: 'mediaService', type: 'de.hybris.platform.servicelayer.media.MediaService'
+    // property name: 'commonI18NService', type: 'de.hybris.platform.servicelayer.i18n.CommonI18NService'
+    // property name: 'sessionService', type: 'de.hybris.platform.servicelayer.session.SessionService'
+    // property name: 'searchRestrictionService', type: 'de.hybris.platform.search.restriction.SearchRestrictionService'
+    // property name: 'cartService', type: 'de.hybris.platform.order.CartService'
+
+}
+
+def easyBeans = context(scope: scriptScope(name: 'EasyBeans.groovy'))
+def init = context(scope: scriptScope(name: 'Init.groovy'))
+
+contributor(easyBeans) {
+
+    // method name: 'easyCoreBeans', type: 'void', params: [beans: '@groovy.lang.DelegatesTo(value = org.springframework.beans.factory.support.DefaultListableBeanFactory.class) groovy.lang.Closure']
+    // method name: 'easyCoreBeans', type: 'void', params: [beans: 'groovy.lang.Closure']
+    // method name: 'easyRESTBeans', type: 'void', params: [beans: 'groovy.lang.Closure']
+    // method name: 'easyWebBeans', type: 'void', params: [context: 'java.lang.String', beans: 'groovy.lang.Closure']
+
+    property name: 'spring', type: 'de.hybris.platform.spring.ctx.TenantIgnoreXmlWebApplicationContext'
+    property name: 'springWeb', type: 'java.util.Map<String,de.hybris.platform.spring.ctx.TenantIgnoreXmlWebApplicationContext>'
+    property name: 'logger', type: 'org.slf4j.Logger'
+    property name: 'extension', type: 'com.sap.cx.boosters.easy.core.data.EasyExtension'
+
+}
+
+// get the context for all closures
+def ctx = context(scope: closureScope())
+
+contributor(ctx) {
+
+    // method name: 'easyCoreBeans', type: 'void', params: [beans: '@groovy.lang.DelegatesTo(value = org.springframework.beans.factory.support.DefaultListableBeanFactory.class) groovy.lang.Closure']
+    def call1 = enclosingCall('easyCoreBeans')
+    def call2 = enclosingCall('easyRESTBeans')
+    def call3 = enclosingCall('easyWebBeans')
+
+    if (call1 || call2 || call3) {
+        delegatesTo(findClass('org.springframework.beans.factory.support.DefaultListableBeanFactory'))
+    } else {
+        delegatesTo(findClass('org.springframework.beans.factory.config.BeanDefinition'))
+    }
+
+}
