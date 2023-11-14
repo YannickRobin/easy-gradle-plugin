@@ -60,12 +60,34 @@ class InitExtensionTask extends AbstractEasyTask {
 
         // Files.copy(Path.of(templateDir.toURI()),Path.of(project.projectDir.toURI()))
 
-        templateDir.traverse() {
-            def type = it.isDirectory() ? 'd' : 'f'
-            File.separator
-            println(type + ' ' + (it.absolutePath - (templateDir.absolutePath + File.separator)))
+        templateDir.traverse() {sourceFile ->
+
+            // def type = sourceFile.isDirectory() ? 'd' : 'f'
+            def relativePath = sourceFile.absolutePath - (templateDir.absolutePath + File.separator)
+            // println "${type} ${relativePath}"
+            def destFile = new File(project.projectDir,relativePath)
+
+            if (sourceFile.directory) {
+
+                if (!destFile.exists()) destFile.mkdirs()
+
+            } else {
+
+                if (!destFile.exists()) {
+                    copyFile(sourceFile,destFile)
+                } else {
+                    logger.info("file ${destFile} already exists in the project")
+                }
+
+            }
+
         }
 
+    }
+
+    def copyFile(File sourceFile, File destFile) {
+        // TODO logic to fill the tempalte
+        Files.copy(Path.of(sourceFile.toURI()),Path.of(destFile.toURI()))
     }
 
     // REVIEWME: groovy has it's own template engine no need to use this com.github.mustachejava probably
