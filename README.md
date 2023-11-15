@@ -42,6 +42,11 @@ export EASY_API_KEY=123456
 
 - Run the command `./gradlew listEasyExtensions` to list all extension available in the repository
 
+To add SAP Commerce libraries of a local installation you need to specify `commercePlatformHome` property in `gradle.properties` file:
+
+commercePlatformHome=~/SAPDevelop/hybris/hybris-2211-easy/hybris
+
+
 ``` 
 
 > Task :listEasyExtensions

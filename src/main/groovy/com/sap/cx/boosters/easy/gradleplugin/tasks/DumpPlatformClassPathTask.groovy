@@ -9,6 +9,12 @@ class DumpPlatformClassPathTask extends DefaultTask {
 
     @TaskAction
     def dumpClassPath() {
+        def property = this.project.properties[EasyPlugin.PROP_COMMERCE_PLATFORM_HOME]
+        if (!property) {
+            println "property ${EasyPlugin.PROP_COMMERCE_PLATFORM_HOME} is not set"
+        } else {
+            println "property PROP_COMMERCE_PLATFORM_HOME: ${property}"
+        }
         def classPath = CommerceExtensionUtil.buildPlatformClassPath(this.project.properties[EasyPlugin.PROP_COMMERCE_PLATFORM_HOME])
         classPath.each {println it.canonicalPath}
     }
