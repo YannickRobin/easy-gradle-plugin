@@ -14,7 +14,7 @@ The objective of this plugin is to:
 In this example, we will create a new extension called `helloworld` in a directory `easy-sample-repo` that represents a local repository for easy extension framework:
 - `mkdir easy-sample-repo`
 - `cd easy-sample-repo`
-- Configure the easy repository in SAP Commerce Cloud backoffice as per instructions in [Easy Extension Framework Documentation](https://sap.github.io/easy-extension-framework/configuring-an-easy-repository-in-backoffice/#configuring-a-local-repository)
+- Configure the easy repository in SAP Commerce Cloud backoffice as per instructions in [Configuring a Local Repository Documentation](https://sap.github.io/easy-extension-framework/configuring-an-easy-repository-in-backoffice/#configuring-a-local-repository)
 - Run the command `gradle init --type basic --project-name easy-sample-repo`
 - Copy the following content into `build.gradle`
     ```groovy
@@ -55,6 +55,8 @@ In this example, we will create a new extension called `helloworld` in a directo
   BUILD SUCCESSFUL in 1s
   1 actionable task: 1 executed
   ```
+
+> Implement the extension as per the instructions available at [Easy Extension Documentation](https://sap.github.io/easy-extension-framework/easy-extension) 
 
 ## Update Repository
 - Run the command `./gradlew easy-update-repo` to list all available extensions in the repository
