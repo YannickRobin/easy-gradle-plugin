@@ -1,5 +1,8 @@
-package com.sap.cx.boosters.easy.gradleplugin
+package com.sap.cx.boosters.easy.gradleplugin.util
 
+import com.sap.cx.boosters.easy.gradleplugin.data.CommerceExtensionInfo
+import groovy.io.FileType
+import groovy.text.GStringTemplateEngine
 import org.slf4j.Logger
 
 import java.nio.file.Path
@@ -32,10 +35,10 @@ class CommerceExtensionUtil {
             return classPath
         }
 
-        commercePlatformDirectory.traverse(type: groovy.io.FileType.FILES, nameFilter: ~/.*\.jar$/) {
+        commercePlatformDirectory.traverse(type: FileType.FILES, nameFilter: ~/.*\.jar$/) {
             classPath << it
         }
-        commercePlatformDirectory.traverse(type: groovy.io.FileType.DIRECTORIES, nameFilter: 'classes') {
+        commercePlatformDirectory.traverse(type: FileType.DIRECTORIES, nameFilter: 'classes') {
             if (!it.absolutePath.contains('eclipsebin')) classPath << it
         }
 
@@ -69,7 +72,7 @@ class CommerceExtensionUtil {
     static Set<CommerceExtensionInfo> getExtensions(File localExtensionsFile) {
 
         def xmlParser = new groovy.xml.XmlSlurper()
-        def templateEngine = new groovy.text.GStringTemplateEngine()
+        def templateEngine = new GStringTemplateEngine()
 
         def hybrisConfig = xmlParser.parse(localExtensionsFile)
         def hybrisBinDir = Path.of(localExtensionsFile.parentFile.parent,'bin').toFile()
@@ -79,7 +82,7 @@ class CommerceExtensionUtil {
 
             def extensions = [] as Set<CommerceExtensionInfo>
             def extensionPath = new File(templateEngine.createTemplate(path).make(bindMap).toString())
-            extensionPath.traverse(type: groovy.io.FileType.FILES, nameFilter: 'extensioninfo.xml', maxDepth: 3) {
+            extensionPath.traverse(type: FileType.FILES, nameFilter: 'extensioninfo.xml', maxDepth: 3) {
 
                 LOG.debug "parsing extensioninfo file: ${it}"
 

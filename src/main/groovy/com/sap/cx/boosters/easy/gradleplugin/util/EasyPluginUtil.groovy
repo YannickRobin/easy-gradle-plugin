@@ -1,6 +1,7 @@
-package com.sap.cx.boosters.easy.gradleplugin
+package com.sap.cx.boosters.easy.gradleplugin.util
 
-import java.nio.file.Path
+import com.sap.cx.boosters.easy.gradleplugin.plugin.extension.EasyPluginExtension
+
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
@@ -28,12 +29,12 @@ class EasyPluginUtil {
                     throw new IOException("Failed to create directory ${newFile}")
                 }
             } else {
-                File parent = newFile.getParentFile();
+                File parent = newFile.getParentFile()
                 if (!parent.isDirectory() && !parent.mkdirs()) {
                     throw new IOException("Failed to create directory ${parent}")
                 }
                 final FileOutputStream fos = new FileOutputStream(newFile)
-                int len;
+                int len
                 while ((len = zis.read(buffer)) > 0) {
                     fos.write(buffer, 0, len)
                 }
@@ -46,9 +47,6 @@ class EasyPluginUtil {
 
     }
 
-    /**
-     * @see https://snyk.io/research/zip-slip-vulnerability
-     */
     static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
 
         def destFile = new File(destinationDir, zipEntry.name)

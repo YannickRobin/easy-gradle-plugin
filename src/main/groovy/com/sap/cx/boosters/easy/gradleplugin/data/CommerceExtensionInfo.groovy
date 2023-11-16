@@ -1,4 +1,4 @@
-package com.sap.cx.boosters.easy.gradleplugin
+package com.sap.cx.boosters.easy.gradleplugin.data
 
 import groovy.transform.EqualsAndHashCode
 
