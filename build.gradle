@@ -10,29 +10,39 @@ plugins {
     id 'com.gradle.plugin-publish' version '1.1.0'
 }
 
+// maven coordinates, artifactId corresponds to the name of the project that corresponds to
+// to the rootProject.name in settings.gradle
+// or the name of the root folder of the plugin project
 group 'io.github.yannickrobin'
-version '0.0.2-SNAPSHOT'
+version '0.0.3'
 
 gradlePlugin {
     website = 'https://github.com/YannickRobin/easy-gradle-plugin'
-    vcsUrl = 'https://github.com/YannickRobin/easy-gradle-plugin'    
+    vcsUrl = 'https://github.com/YannickRobin/easy-gradle-plugin'
     plugins {
         easyPlugin {
-            id = 'io.github.yannickrobin.easyplugin'
-            implementationClass = 'com.sap.cx.boosters.easy.gradleplugin.EasyPlugin'
+            id = "${group}.${rootProject.name}"
+            implementationClass = 'com.sap.cx.boosters.easy.gradleplugin.plugin.EasyPlugin'
             displayName = 'Gradle  Plugin for Easy, Runtime Add-on Framework for SAP Commerce Cloud'
             description = 'This plugin is used to manage Easy extensions as part of Easy Framework for SAP Commerce Cloud'
-            tags.set(['easy', 'SAP', 'Commerce'])            
+            tags.set(['easy', 'SAP', 'Commerce'])
         }
     }
 }
 
 repositories {
     mavenCentral()
+
 }
 
 dependencies {
     implementation 'org.codehaus.groovy.modules.http-builder:http-builder:0.7.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.7.1'
+    implementation 'org.apache.velocity:velocity-engine-core:2.3'
     implementation 'com.github.spullara.mustache.java:compiler:0.9.10'
-    //implementation 'com.github.spullara.mustache.java:interpreter:0.9.10'    
+    testImplementation 'org.spockframework:spock-core:2.3-groovy-3.0'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }

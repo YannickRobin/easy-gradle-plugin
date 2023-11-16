@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "authors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string",
+      "default": ""
+    },
+    "documentation": {
+      "type": "string"
+    },
+    "easyVersion": {
+      "type": "string",
+      "default": "0.2"
+    },
+    "groovyMainPath": {
+      "type": "string",
+      "default": "src/main/groovy"
+    },
+    "groovyTestPath": {
+      "type": "string",
+      "default": "src/test/groovy"
+    },
+    "groupId": {
+      "type": "string",
+      "default": "com.sap.cx.boosters.easy"
+    },
+    "id": {
+      "type": "string",
+      "default": "my-extension"
+    },
+    "init": {
+      "type": "string",
+      "default": "Init.groovy"
+    },
+    "name": {
+      "type": "string",
+      "default": "My Extension"
+    },
+    "requires": {
+      "type": "object",
+      "properties" : {
+        "easy": {
+          "type" : "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "commerce": {
+          "type" : "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "thumbnail": {
+      "type": "string",
+      "default": ""
+    },
+    "vendor": {
+      "type": "string",
+      "default": ""
+    },
+    "version": {
+      "type": "string",
+      "default": "0.0.1"
+    }
+  },
+  "required": [
+    "groupId",
+    "id",
+    "name",
+    "version",
+    "easyVersion"
+  ]
+}
