@@ -1,64 +1,96 @@
 package com.sap.cx.boosters.easy.gradleplugin.tasks
 
-import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.Input
-
-import groovyx.net.http.RESTClient
 import groovy.json.JsonOutput
-
-import com.sap.cx.boosters.easy.gradleplugin.EasyPluginExtension
-import com.sap.cx.boosters.easy.gradleplugin.EasyPluginUtil
+import groovyx.net.http.RESTClient
+import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
 
 abstract class AbstractEasyTask extends DefaultTask {
-  
-    protected String apiKey;
-    protected RESTClient restClient;
 
-    public void init(String initMessage)
-    {
-        init(initMessage, false)
+    @Input
+    @Optional
+    String easyApiKey
+
+    @Input
+    @Optional
+    String easyApiBaseUrl
+
+    @Input
+    @Optional
+    String repositoryCode
+
+    @Internal
+    RESTClient restClient
+
+    void init() {
+        group = "easy"
+        this.initializeEasyApiKey()
+        this.initializeEasyApiBaseUrl()
+        this.initializeRepositoryCode()
+        this.initRestClient()
     }
 
-    public void init(String initMessage, boolean eventEnabled)
-    {
-        displayEasyConfigInfo()
-
-        println initMessage
-
-        setRestClient(eventEnabled)
-    }       
-
-    private void displayEasyConfigInfo()
-    {
-        println "Welcome to Easy Gradle Plugin\n"
-        println "SAP Commerce Base URL: ${easyConfig.baseUrl.get()}"
-        println "Repository: ${easyConfig.repository.get()}"
-        println "Extension: ${easyConfig.extension.get()}\n"
+    void initializeEasyApiKey() {
+        if (null == this.easyApiKey || this.easyApiKey.isBlank()) {
+            String configuredApiKey = project.gradle.startParameter.projectProperties.easyApiKey
+            if (null != configuredApiKey && !configuredApiKey.isBlank()) {
+                this.easyApiKey = configuredApiKey
+            } else if (project.properties.containsKey('sap.commerce.easy.api.key')) {
+                this.easyApiKey = project.properties.get('sap.commerce.easy.api.key')
+            } else {
+                throw new GradleException('Easy API Key is required for easy tasks')
+            }
+        }
     }
 
-    private void setRestClient(boolean eventEnabled) {
-        restClient = new RESTClient(easyConfig.baseUrl.get())
+    void initializeEasyApiBaseUrl() {
+        if (null == this.easyApiBaseUrl || this.easyApiBaseUrl.isBlank()) {
+            String configuredEasyApiBaseUrl = project.gradle.startParameter.projectProperties.easyApiBaseUrl
+            if (null != configuredEasyApiBaseUrl && !configuredEasyApiBaseUrl.isBlank()) {
+                this.easyApiBaseUrl = configuredEasyApiBaseUrl
+            } else if (project.properties.containsKey('sap.commerce.easy.api.base.url')) {
+                this.easyApiBaseUrl = project.properties.get('sap.commerce.easy.api.base.url')
+            } else {
+                throw new GradleException('Easy API url is required for easy tasks')
+            }
+        }
+    }
+
+    void initializeRepositoryCode() {
+        if (null == this.repositoryCode || this.repositoryCode.isBlank()) {
+            String configuredRepositoryCode = project.gradle.startParameter.projectProperties.repositoryCode
+            if (null != configuredRepositoryCode && !configuredRepositoryCode.isBlank()) {
+                this.repositoryCode = configuredRepositoryCode
+            } else if (project.properties.containsKey('sap.commerce.easy.repository.code')) {
+                this.repositoryCode = project.properties.get("sap.commerce.easy.repository.code")
+            } else {
+                throw new GradleException('Repository Code is required for executing easy events.')
+            }
+        }
+    }
+
+    void initRestClient() {
+        restClient = new RESTClient(this.easyApiBaseUrl)
         restClient.headers['accept'] = 'application/json'
 
-        apiKey = easyConfig.apiKey.get()
-        if (apiKey == null || apiKey === '')
-            throw new IllegalArgumentException("Environment variable EASY_API_KEY not set")
-
-        restClient.headers['X-API-KEY'] = apiKey
+        restClient.headers['X-API-KEY'] = this.easyApiKey
         restClient.ignoreSSLIssues()
 
-        restClient.handler.failure = {def response, def data ->
-            println "API call failed. HTTP status: $response.status";
-            def jsonData = JsonOutput.toJson(data)
-            def prettyData = JsonOutput.prettyPrint(jsonData)                      
-            println "$prettyData";
-        }
-        restClient.handler.success = {def response, def data ->
-            println "API call successfull. HTTP status: $response.status"   
+        restClient.handler.failure = { response, data ->
+            println "API execution failed. HTTP status: $response.status"
             def jsonData = JsonOutput.toJson(data)
             def prettyData = JsonOutput.prettyPrint(jsonData)
-            println "$prettyData"
+            println prettyData
+        }
+
+        restClient.handler.success = { response, data ->
+            println "API executed successfully. HTTP status: $response.status"
+            def jsonData = JsonOutput.toJson(data)
+            def prettyData = JsonOutput.prettyPrint(jsonData)
+            println prettyData
 
         }
 

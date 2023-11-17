@@ -1,23 +1,22 @@
 package com.sap.cx.boosters.easy.gradleplugin.tasks
 
-import org.gradle.api.DefaultTask
+
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.Input
-
-import groovyx.net.http.RESTClient
-
-import com.sap.cx.boosters.easy.gradleplugin.EasyPluginExtension
-import com.sap.cx.boosters.easy.gradleplugin.EasyPluginUtil
+import com.sap.cx.boosters.easy.gradleplugin.plugin.extension.EasyPluginExtension
 
 class ListExtensionsTask extends AbstractEasyTask {
 
-    @Input
-    EasyPluginExtension easyConfig
+    @Override
+    void init() {
+        super.init()
+        description = "lists easy extensions of an easy repository"
+    }
 
     @TaskAction
-    def list() {
-        init("List extensions...")
-        restClient.get(path: '/easyrest/easyapi/repository/' + easyConfig.repository.get() + '/extensions')
+    void list() {
+        init()
+        restClient.get(path: "$easyApiBaseUrl/repository/$repositoryCode/extensions")
     }
 
 }
