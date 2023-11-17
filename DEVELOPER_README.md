@@ -1,9 +1,9 @@
 # Documentation for developers
 
 # How to build the plugin
-- Install Gradle 7.6
+- Install latest gradle version
 - Clone this repository
-- Run the command `gradle build`
+- Run the command `gradle clean build `
 
 The build will generate the following jar `build/libs/easy-plugin-x.x.x-SNAPSHOT.jar`
 

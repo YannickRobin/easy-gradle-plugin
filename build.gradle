@@ -6,6 +6,7 @@ buildscript {
 
 plugins {
     id 'java-gradle-plugin'
+    id 'java'
     id 'groovy'
     id 'com.gradle.plugin-publish' version '1.1.0'
 }
@@ -28,6 +29,12 @@ gradlePlugin {
             tags.set(['easy', 'SAP', 'Commerce'])
         }
     }
+}
+
+java {
+    // Set the Java version for compilation and runtime
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 repositories {

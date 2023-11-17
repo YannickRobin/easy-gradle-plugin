@@ -4,15 +4,14 @@ import com.sap.cx.boosters.easy.gradleplugin.util.CommerceExtensionUtil
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 
 class DumpPlatformClassPathTask extends DefaultTask {
 
     @Input
+    @Optional
     String commercePlatformHome
-
-    @Input
-    String commercePlatformLibraries
 
     void init() {
         this.initializeCommercePlatformHome()
