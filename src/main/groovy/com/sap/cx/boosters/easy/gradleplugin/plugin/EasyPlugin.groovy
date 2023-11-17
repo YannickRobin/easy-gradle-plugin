@@ -17,12 +17,16 @@ class EasyPlugin implements Plugin<Project> {
         // add commerce libraries
         if (!project.hasProperty(PROP_COMMERCE_PLATFORM_HOME)) {
             project.logger.warn "no commerce platform home is set, specify commercePlatformHome in gradle.properties file"
-        }
+        } else {
 
-        project.extensions.add(
-                EXT_COMMERCE_PLATFORM_LIBRARIES,
-                project.files(CommerceExtensionUtil.buildPlatformClassPath(project.properties[PROP_COMMERCE_PLATFORM_HOME] as String))
-        )
+            project.extensions.add(
+                    EXT_COMMERCE_PLATFORM_LIBRARIES,
+                    project.files(CommerceExtensionUtil.buildPlatformClassPath(project.properties[PROP_COMMERCE_PLATFORM_HOME] as String))
+            )
+
+            project.dependencies.add('implementation',project.extensions.getByName(EXT_COMMERCE_PLATFORM_LIBRARIES))
+
+        }
 
         project.tasks.register('easy-ext-gen', GenerateEasyExtensionTask) {
             group = 'easy'
