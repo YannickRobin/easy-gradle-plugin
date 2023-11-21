@@ -10,6 +10,10 @@ class RelationElementType {
     CardinalityTypeEnum cardinality
     CollectionTypeEnum collectiontype
 
+    RelationElementType(){
+        super()
+    }
+
     String getQualifier() {
         return qualifier
     }

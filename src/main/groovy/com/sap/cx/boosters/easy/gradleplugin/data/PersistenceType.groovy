@@ -7,13 +7,8 @@ class PersistenceType {
     String column
     String attributeHandler
 
-    PersistenceType(PersistenceTypeEnum type) {
-        this.type = type
-    }
-
-    PersistenceType(PersistenceTypeEnum type, String attributeHandler) {
-        this.type = type
-        this.attributeHandler = attributeHandler
+    PersistenceType(){
+        super()
     }
 
     PersistenceTypeEnum getType() {

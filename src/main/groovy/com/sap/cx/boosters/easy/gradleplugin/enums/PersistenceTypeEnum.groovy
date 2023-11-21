@@ -1,5 +1,7 @@
 package com.sap.cx.boosters.easy.gradleplugin.enums
 
+import com.fasterxml.jackson.annotation.JsonValue
+
 enum PersistenceTypeEnum {
     PROPERTY("property"),
     DYNAMIC("dynamic")
@@ -10,6 +12,7 @@ enum PersistenceTypeEnum {
         this.value = value
     }
 
+    @JsonValue
     String getValue() {
         return value
     }

@@ -24,11 +24,16 @@ class EasyPlugin implements Plugin<Project> {
                     project.files(CommerceExtensionUtil.buildPlatformClassPath(project.properties[PROP_COMMERCE_PLATFORM_HOME] as String))
             )
 
-            project.dependencies.add('implementation',project.extensions.getByName(EXT_COMMERCE_PLATFORM_LIBRARIES))
+            //project.dependencies.add('implementation',project.extensions.getByName(EXT_COMMERCE_PLATFORM_LIBRARIES))
 
         }
 
         project.tasks.register('easy-ext-gen', GenerateEasyExtensionTask) {
+            group = 'easy'
+            description = 'Generates an easy extension in current directory'
+        }
+
+        project.tasks.register('easy-class-gen', GenerateModelClassesTask) {
             group = 'easy'
             description = 'Generates an easy extension in current directory'
         }

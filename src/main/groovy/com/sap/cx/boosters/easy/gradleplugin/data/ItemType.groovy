@@ -2,12 +2,18 @@ package com.sap.cx.boosters.easy.gradleplugin.data
 
 class ItemType {
     String code
-    Map<String, String> name
+    List<LocalizedString> name
     boolean autocreate = true
     boolean generate = true
-    String superType = "GenericItem"
+    String superType = 'GenericItem'
     DeploymentType deployment
     Set<AttributeType> attributes
+    String modelClassName
+    String superTypeModelClass = 'de.hybris.platform.core.model.ItemModel'
+
+    ItemType(){
+        super()
+    }
 
     String getCode() {
         return code
@@ -17,11 +23,11 @@ class ItemType {
         this.code = code
     }
 
-    Map<String, String> getName() {
+    List<LocalizedString> getName() {
         return name
     }
 
-    void setName(Map<String, String> name) {
+    void setName(List<LocalizedString> name) {
         this.name = name
     }
 
@@ -64,5 +70,21 @@ class ItemType {
 
     void setAttributes(Set<AttributeType> attributes) {
         this.attributes = attributes
+    }
+
+    String getModelClassName() {
+        return modelClassName
+    }
+
+    void setModelClassName(String modelClassName) {
+        this.modelClassName = modelClassName
+    }
+
+    String getSuperTypeModelClass() {
+        return superTypeModelClass
+    }
+
+    void setSuperTypeModelClass(String superTypeModelClass) {
+        this.superTypeModelClass = superTypeModelClass
     }
 }

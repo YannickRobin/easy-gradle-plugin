@@ -2,7 +2,11 @@ package com.sap.cx.boosters.easy.gradleplugin.data
 
 class EnumerationValueType {
     String code
-    Map<String, String> name
+    List<LocalizedString> name
+
+    EnumerationValueType(){
+        super()
+    }
 
     String getCode() {
         return code
@@ -12,11 +16,11 @@ class EnumerationValueType {
         this.code = code
     }
 
-    Map<String, String> getName() {
+    List<LocalizedString> getName() {
         return name
     }
 
-    void setName(Map<String, String> name) {
+    void setName(List<LocalizedString> name) {
         this.name = name
     }
 }

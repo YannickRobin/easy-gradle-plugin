@@ -4,6 +4,10 @@ class DeploymentType {
     String table
     String typecode
 
+    DeploymentType(){
+        super()
+    }
+
     String getTable() {
         return table
     }

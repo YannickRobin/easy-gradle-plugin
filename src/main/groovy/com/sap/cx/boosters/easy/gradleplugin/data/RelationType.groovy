@@ -6,6 +6,10 @@ class RelationType {
     RelationElementType sourceElement
     RelationElementType targetElement
 
+    RelationType(){
+        super()
+    }
+
     String getCode() {
         return code
     }

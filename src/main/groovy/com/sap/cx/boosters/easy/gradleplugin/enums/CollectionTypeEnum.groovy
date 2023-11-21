@@ -1,5 +1,7 @@
 package com.sap.cx.boosters.easy.gradleplugin.enums
 
+import com.fasterxml.jackson.annotation.JsonValue
+
 enum CollectionTypeEnum {
     SET("set"),
     LIST("list"),
@@ -11,6 +13,7 @@ enum CollectionTypeEnum {
         this.value = value
     }
 
+    @JsonValue
     String getValue() {
         return value
     }

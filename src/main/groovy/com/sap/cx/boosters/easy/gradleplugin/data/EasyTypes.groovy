@@ -7,6 +7,10 @@ class EasyTypes {
     Set<RelationType> relationtypes = new HashSet<>()
     Set<ItemType> itemtypes = new HashSet<>()
 
+    EasyTypes(){
+        super()
+    }
+
     Set<CollectionType> getCollectiontypes() {
         return collectiontypes
     }

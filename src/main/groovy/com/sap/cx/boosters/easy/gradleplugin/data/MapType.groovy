@@ -2,9 +2,13 @@ package com.sap.cx.boosters.easy.gradleplugin.data
 
 class MapType {
     String code
-    Map<String, String> name
+    List<LocalizedString> name
     String argumentType
     String returnType
+
+    MapType(){
+        super()
+    }
 
     String getCode() {
         return code
@@ -14,11 +18,11 @@ class MapType {
         this.code = code
     }
 
-    Map<String, String> getName() {
+    List<LocalizedString> getName() {
         return name
     }
 
-    void setName(Map<String, String> name) {
+    void setName(List<LocalizedString> name) {
         this.name = name
     }
 

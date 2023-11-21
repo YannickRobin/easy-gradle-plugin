@@ -2,9 +2,15 @@ package com.sap.cx.boosters.easy.gradleplugin.data
 
 class AttributeType {
     String qualifier
-    Map<String, String> name
+    List<LocalizedString> name
     String type
+    String typeClass
     Map<String, Boolean> modifiers
+    PersistenceType persistence
+
+    AttributeType(){
+        super()
+    }
 
     String getQualifier() {
         return qualifier
@@ -14,11 +20,11 @@ class AttributeType {
         this.qualifier = qualifier
     }
 
-    Map<String, String> getName() {
+    List<LocalizedString> getName() {
         return name
     }
 
-    void setName(Map<String, String> name) {
+    void setName(List<LocalizedString> name) {
         this.name = name
     }
 
@@ -30,11 +36,27 @@ class AttributeType {
         this.type = type
     }
 
+    String getTypeClass() {
+        return typeClass
+    }
+
+    void setTypeClass(String typeClass) {
+        this.typeClass = typeClass
+    }
+
     Map<String, Boolean> getModifiers() {
         return modifiers
     }
 
     void setModifiers(Map<String, Boolean> modifiers) {
         this.modifiers = modifiers
+    }
+
+    PersistenceType getPersistence() {
+        return persistence
+    }
+
+    void setPersistence(PersistenceType persistence) {
+        this.persistence = persistence
     }
 }
