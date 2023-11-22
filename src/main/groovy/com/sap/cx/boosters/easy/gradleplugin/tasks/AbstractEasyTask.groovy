@@ -82,7 +82,7 @@ abstract class AbstractEasyTask extends DefaultTask {
 
         restClient.handler.failure = { response, data ->
             if (response.status == 404) {
-                println("Easy API is not available. PLease install Easy API to work with gradle plugin")
+                println("Easy API is not available. Please install Easy API to work with gradle plugin")
             } else {
                 println "API execution failed. HTTP status: $response.status"
                 def jsonData = JsonOutput.toJson(data)
