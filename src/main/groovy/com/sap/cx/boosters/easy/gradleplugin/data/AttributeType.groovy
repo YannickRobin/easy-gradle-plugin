@@ -8,7 +8,7 @@ class AttributeType {
     Map<String, Boolean> modifiers
     PersistenceType persistence
 
-    AttributeType(){
+    AttributeType() {
         super()
     }
 
@@ -34,6 +34,13 @@ class AttributeType {
 
     void setType(String type) {
         this.type = type
+        def key = type
+        if (key?.startsWith('localized:')) {
+            key = key.split(':').last()
+        }
+        if (EasyTypeConstants.ATOMIC_TYPE_CLASS_MAPPING.containsKey(key)) {
+            this.setTypeClass(EasyTypeConstants.ATOMIC_TYPE_CLASS_MAPPING[key])
+        }
     }
 
     String getTypeClass() {
@@ -59,4 +66,5 @@ class AttributeType {
     void setPersistence(PersistenceType persistence) {
         this.persistence = persistence
     }
+
 }

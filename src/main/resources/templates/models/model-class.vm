@@ -11,9 +11,10 @@ package $package
 
 import ${itemType.superTypeModelClass}
 #foreach($attribute in ${itemType.attributes})
+#if(!$excludedImports.contains($attribute.typeClass))
 import ${attribute.typeClass}
 #end
-import java.util.Locale
+#end
 import de.hybris.bootstrap.annotations.Accessor
 import de.hybris.platform.servicelayer.model.ItemModelContext
 
@@ -41,29 +42,39 @@ class ${itemType.modelClassName} extends $superClassName {
     #set($attributeQualifier = $attribute.qualifier)
     #set($firstChar = $attributeQualifier.substring(0, 1).toUpperCase())
     #set($capitalizedQualifier = $firstChar + $attributeQualifier.substring(1))
-    @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = AccessorType.GETTER)
+    #if($attribute.type.startsWith("localized"))
+    @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
+    $attributeClass get$capitalizedQualifier() {
+        return get$capitalizedQualifier(null)
+    }
+
+    @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
+    $attributeClass get$capitalizedQualifier(final Locale loc) {
+        return getPersistenceContext().getLocalizedValue($attributeQualifier.toUpperCase(), loc)
+    }
+    #else
+    @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
     $attributeClass get$capitalizedQualifier() {
         return getPersistenceContext().getPropertyValue($attributeQualifier.toUpperCase())
     }
+    #end
 
     #if($attribute.type.startsWith("localized"))
-    @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = AccessorType.GETTER)
-    $attributeClass get$capitalizedQualifier(final Locale loc) {
-        return getPersistenceContext().getPropertyValue($attributeQualifier.toUpperCase(), loc)
+    @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
+    $attributeClass set$capitalizedQualifier(final $attributeClass value) {
+        set$capitalizedQualifier(value, null)
     }
 
-    #end
-    @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = AccessorType.SETTER)
-    void set$capitalizedQualifier()(final $attributeClass value) {
+    @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
+    $attributeClass set$capitalizedQualifier(final $attributeClass value, final Locale loc) {
+        getPersistenceContext().setLocalizedValue($attributeQualifier.toUpperCase(), loc, value)
+    }
+    #else
+    @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.SETTER)
+    void set$capitalizedQualifier(final $attributeClass value) {
         getPersistenceContext().setPropertyValue($attributeQualifier.toUpperCase(), value)
     }
-
-    #if($attribute.type.startsWith("localized"))
-    @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = AccessorType.GETTER)
-    $attributeClass set$capitalizedQualifier(final $attributeClass value, final Locale loc) {
-        getPersistenceContext().setPropertyValue($attributeQualifier.toUpperCase(), loc, value)
-    }
-
     #end
+
 #end
 }

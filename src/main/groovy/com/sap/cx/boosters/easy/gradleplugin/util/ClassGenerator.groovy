@@ -1,5 +1,6 @@
 package com.sap.cx.boosters.easy.gradleplugin.util
 
+import com.sap.cx.boosters.easy.gradleplugin.data.EasyTypeConstants
 import com.sap.cx.boosters.easy.gradleplugin.data.EnumerationType
 import com.sap.cx.boosters.easy.gradleplugin.data.ItemType
 import org.apache.velocity.VelocityContext
@@ -29,6 +30,7 @@ class ClassGenerator {
         def velocityContext = new VelocityContext()
         velocityContext.put("currentDate", new Date())
         velocityContext.put("year", Calendar.getInstance().get(Calendar.YEAR))
+        velocityContext.put("excludedImports", EasyTypeConstants.EXCLUDED_IMPORTS)
         return velocityContext
     }
 
