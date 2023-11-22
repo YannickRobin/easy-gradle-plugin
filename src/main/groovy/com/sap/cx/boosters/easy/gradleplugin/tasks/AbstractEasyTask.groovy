@@ -2,6 +2,7 @@ package com.sap.cx.boosters.easy.gradleplugin.tasks
 
 import groovy.json.JsonOutput
 import groovyx.net.http.RESTClient
+import org.codehaus.groovy.GroovyException
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
@@ -80,10 +81,14 @@ abstract class AbstractEasyTask extends DefaultTask {
         restClient.ignoreSSLIssues()
 
         restClient.handler.failure = { response, data ->
-            println "API execution failed. HTTP status: $response.status"
-            def jsonData = JsonOutput.toJson(data)
-            def prettyData = JsonOutput.prettyPrint(jsonData)
-            println prettyData
+            if (response.status == 404) {
+                println("Easy API is not available. PLease install Easy API to work with gradle plugin")
+            } else {
+                println "API execution failed. HTTP status: $response.status"
+                def jsonData = JsonOutput.toJson(data)
+                def prettyData = JsonOutput.prettyPrint(jsonData)
+                println prettyData
+            }
         }
 
         restClient.handler.success = { response, data ->
