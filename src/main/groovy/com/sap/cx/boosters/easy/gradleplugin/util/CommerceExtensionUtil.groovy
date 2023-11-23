@@ -3,10 +3,14 @@ package com.sap.cx.boosters.easy.gradleplugin.util
 import com.sap.cx.boosters.easy.gradleplugin.data.CommerceExtensionInfo
 import groovy.io.FileType
 import groovy.text.GStringTemplateEngine
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import java.nio.file.Path
 
 class CommerceExtensionUtil {
+
+    static Logger log = LoggerFactory.getLogger(CommerceExtensionUtil)
 
     static Set<File> buildPlatformClassPath(String commercePlatformHome) {
 
@@ -43,7 +47,7 @@ class CommerceExtensionUtil {
 
         extensions.each{info ->
 
-            println "adding classpath for extension: ${info.name}"
+            log.debug "adding classpath for extension: ${info.name}"
             def extBinDir = new File(info.rootPath,'bin')
             if (extBinDir.exists()) classPath.addAll(extBinDir.listFiles(jarFilter))
 
@@ -58,7 +62,7 @@ class CommerceExtensionUtil {
 
         }
 
-        classPath.each{it -> println it.canonicalPath}
+        classPath.each{it -> log.debug it.canonicalPath}
 
         classPath
 
@@ -97,7 +101,7 @@ class CommerceExtensionUtil {
             def extensions = [] as Set<CommerceExtensionInfo>
             def extensionPath = new File(resolvePath(path))
             extensionPath.traverse(type: FileType.FILES, nameFilter: 'extensioninfo.xml', maxDepth: 3) {
-                println "parsing extensioninfo file: ${it}"
+                log.debug "parsing extensioninfo file: ${it}"
                 extensions << parseExtensionInfo(it)
             }
 
@@ -115,15 +119,16 @@ class CommerceExtensionUtil {
 
         def coreExtensions = scanPath('$HYBRIS_BIN_DIR/platform/ext')
         def allExtensionsMap = allExtensions.collectEntries{[(it.name):it]} as Map<String,CommerceExtensionInfo>
-        coreExtensions.each {allExtensionsMap.put(it.name,it)}
 
+        coreExtensions.each {allExtensionsMap.put(it.name,it)}
         def configuredExtensionNames = coreExtensions*.name
-        configuredExtensionNames += hybrisConfig.extensions[0].extension.collect{it.'@name'.text()}
+
+        configuredExtensionNames += hybrisConfig.extensions[0].extension.collect{it.'@name'.text()}.findAll{it}
 
         // adding extensions configured with absolute path dir
         hybrisConfig.extensions[0].extension.collect{it.'@dir'.text()}.findAll{it}.each{extBaseDir ->
             def info = parseExtensionInfo(new File(resolvePath(extBaseDir),'extensioninfo.xml'))
-            allExtensions << info
+            allExtensionsMap[info.name] = info
             configuredExtensionNames << info.name
         }
 
@@ -131,13 +136,13 @@ class CommerceExtensionUtil {
 
         def add
         add = {String extName ->
-            println "adding configured extension: ${extName}"
+            log.debug "adding configured extension: ${extName}"
             def extInfo = allExtensionsMap[extName]
             if (extInfo) {
                 if (requiredExtensions.add(extInfo)) {
                     if (allExtensionsMap[extName] && allExtensionsMap[extName].requires) {
                         allExtensionsMap[extName].requires.each{require ->
-                            println "adding required extension: ${require}"
+                            log.debug "adding required extension: ${require}"
                             // NOTE trampoline doesn't to work here
                             // add.trampoline(require)
                             add(require)
