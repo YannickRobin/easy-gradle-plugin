@@ -116,7 +116,7 @@ class CommerceExtensionUtil {
             if (path == '\${HYBRIS_BIN_DIR}') {
                 path = bindMap.HYBRIS_BIN_DIR
             }
-            println "searching extensions in path: $path"
+            println("searching extensions in path: $path")
             allExtensions.addAll(scanPath(path))
         }
 
@@ -153,7 +153,7 @@ class CommerceExtensionUtil {
                     }
                 }
             } else {
-                println "skipped invalid extension ${extName}"
+                log.debug "skipped invalid extension ${extName}"
             }
         }
 

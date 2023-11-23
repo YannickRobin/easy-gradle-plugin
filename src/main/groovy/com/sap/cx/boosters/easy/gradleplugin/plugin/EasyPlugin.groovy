@@ -6,7 +6,6 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.GroovyPlugin
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.testing.Test
 
@@ -28,6 +27,11 @@ class EasyPlugin implements Plugin<Project> {
 
         project.extensions.findByType(JavaPluginExtension).sourceCompatibility = JavaVersion.VERSION_17
         project.extensions.findByType(JavaPluginExtension).targetCompatibility = JavaVersion.VERSION_17
+
+        project.repositories {
+            mavenLocal()
+            mavenCentral()
+        }
 
         // add commerce libraries
         if (!project.hasProperty(PROP_COMMERCE_PLATFORM_HOME)) {

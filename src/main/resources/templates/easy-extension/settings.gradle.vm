@@ -4,5 +4,11 @@
  * This is a Gradle build for an easy extension.
  * To learn more about Easy Extension Framework refer to the documentation at: https://sap.github.io/easy-extension-framework
  */
-
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        mavenLocal()
+    }
+}
 rootProject.name = "${EASY_EXTENSION_ID}"
