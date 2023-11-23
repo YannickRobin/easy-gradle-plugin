@@ -1,10 +1,11 @@
 package com.sap.cx.boosters.easy.gradleplugin.plugin
 
-
 import com.sap.cx.boosters.easy.gradleplugin.tasks.*
 import com.sap.cx.boosters.easy.gradleplugin.util.CommerceExtensionUtil
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.GroovyPlugin
 import org.gradle.api.tasks.testing.Test
 
 class EasyPlugin implements Plugin<Project> {
@@ -14,12 +15,16 @@ class EasyPlugin implements Plugin<Project> {
     public static final String PROP_COMMERCE_PLATFORM_HOME = 'commercePlatformHome'
 
     void apply(Project project) {
+        project.plugins.apply(GroovyPlugin)
 
-        if(project.plugins.hasPlugin('groovy')){
-            project.sourceSets.main.groovy.srcDirs +='src/main/groovy'
-            project.sourceSets.main.groovy.srcDirs +='gensrc/main/groovy'
-            project.sourceSets.test.groovy.srcDirs +='src/test/groovy'
-            project.sourceSets.test.groovy.srcDirs +='gensrc/test/groovy'
+        project.plugins.withType(GroovyPlugin).configureEach {
+            project.sourceSets.main.groovy.srcDirs += 'src/main/groovy'
+            project.sourceSets.main.groovy.srcDirs += 'gensrc/main/groovy'
+            project.sourceSets.test.groovy.srcDirs += 'src/test/groovy'
+            project.sourceSets.test.groovy.srcDirs += 'gensrc/test/groovy'
+
+            project.sourceCompatibility = JavaVersion.VERSION_17
+            project.targetCompatibility = JavaVersion.VERSION_17
         }
 
         // add commerce libraries
@@ -31,7 +36,7 @@ class EasyPlugin implements Plugin<Project> {
                     EXT_COMMERCE_PLATFORM_LIBRARIES,
                     project.files(CommerceExtensionUtil.buildPlatformClassPath(project.properties[PROP_COMMERCE_PLATFORM_HOME] as String))
             )
-            project.dependencies.add('implementation',project.extensions.getByName(EXT_COMMERCE_PLATFORM_LIBRARIES))
+            project.dependencies.add('implementation', project.extensions.getByName(EXT_COMMERCE_PLATFORM_LIBRARIES))
         }
 
         project.dependencies.add('implementation', 'org.codehaus.groovy:groovy-all:3.0.13')
