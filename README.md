@@ -32,12 +32,22 @@ Execute the following pre-requisites.
   commercePlatformHome=<SAP COMMERCE HOME>
   ```
 
-## Configure your `local easy repository` directory
+## Configure your local Easy Repository
 In this example, we will create an easy local repository `easy-sample-repo` that represents a by a local directory in easy extension framework:
 - `mkdir easy-sample-repo`
 - `cd easy-sample-repo`
 - Configure the easy repository in SAP Commerce Cloud backoffice as per instructions in [Configuring a Local Repository Documentation](https://sap.github.io/easy-extension-framework/configuring-an-easy-repository-in-backoffice/#configuring-a-local-repository)
-- Run the command `gradle init --type basic --project-name easy-sample-repo`
+- Run the command `gradle init --type basic --dsl groovy --no-incubating --project-name easy-sample-repo`
+- Add the following content in `settings.gradle` file as the **_first line_**
+  ```  
+   pluginManagement {
+     repositories {
+       gradlePluginPortal()
+       mavenCentral()
+       mavenLocal()
+     }
+   }
+  ```  
 - Copy the following content into `build.gradle`
     ```groovy
     plugins {
