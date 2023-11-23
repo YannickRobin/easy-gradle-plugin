@@ -6,6 +6,8 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.GroovyPlugin
+import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.testing.Test
 
 class EasyPlugin implements Plugin<Project> {
@@ -22,10 +24,10 @@ class EasyPlugin implements Plugin<Project> {
             project.sourceSets.main.groovy.srcDirs += 'gensrc/main/groovy'
             project.sourceSets.test.groovy.srcDirs += 'src/test/groovy'
             project.sourceSets.test.groovy.srcDirs += 'gensrc/test/groovy'
-
-            project.sourceCompatibility = JavaVersion.VERSION_17
-            project.targetCompatibility = JavaVersion.VERSION_17
         }
+
+        project.extensions.findByType(JavaPluginExtension).sourceCompatibility = JavaVersion.VERSION_17
+        project.extensions.findByType(JavaPluginExtension).targetCompatibility = JavaVersion.VERSION_17
 
         // add commerce libraries
         if (!project.hasProperty(PROP_COMMERCE_PLATFORM_HOME)) {
