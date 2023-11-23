@@ -235,16 +235,18 @@ In this example, we will generate an easy extension `helloworld` in local reposi
   ```
 
 ## All Tasks
-- Run the command `./gradlew tasks` to see all the task available with this plugin
+- Run the command `./gradlew tasks --group easy` to see all the task available with this plugin
 
   ```
-  Easy tasks
-  ----------
-  easy-dump-classpath - Dumps the classpath
-  easy-ext-gen - Generates an easy extension in current directory
-  easy-ext-install - Installs an easy extension
-  easy-ext-list - Lists the easy extensions of a repository
-  easy-ext-reinstall - Re-installs/reloads an easy extension
-  easy-ext-uninstall - Uninstalls an easy extension
-  easy-update-repo - Updates the repository from remote location
+    Easy tasks
+    ----------
+    easy-class-gen - Generates an easy extension in current directory
+    easy-dump-classpath - Dumps the classpath
+    easy-ext-gen - Generates an easy extension in current directory
+    easy-ext-install - Installs an easy extension
+    easy-ext-list - Lists the easy extensions of a repository
+    easy-ext-reinstall - Re-installs/reloads an easy extension
+    easy-ext-uninstall - Uninstalls an easy extension
+    easy-update-repo - Updates the repository from remote location
+
   ```
