@@ -21,14 +21,14 @@ class CommerceExtensionUtil {
         }
 
         def commerceHomeDirectory = new File(resolveHome(commercePlatformHome))
-        def commercePlatformDirectory = new File(commerceHomeDirectory,'bin/platform')
+        def commercePlatformDirectory = new File(commerceHomeDirectory, 'bin/platform')
 
         if (!commercePlatformDirectory.exists()) {
             println "commerce platform dir not found ${commercePlatformDirectory.absolutePath}"
             return classPath
         }
 
-        def localExtensionsFile = new File(commerceHomeDirectory,'config/localextensions.xml')
+        def localExtensionsFile = new File(commerceHomeDirectory, 'config/localextensions.xml')
         if (!localExtensionsFile.exists()) {
             println "no localextensions.xml file found ${localExtensionsFile.absolutePath}"
             return classPath
@@ -43,26 +43,26 @@ class CommerceExtensionUtil {
 
         def extensions = getExtensions(localExtensionsFile)
 
-        def jarFilter = {dir,name -> name.endsWith('.jar')} as FilenameFilter
+        def jarFilter = { dir, name -> name.endsWith('.jar') } as FilenameFilter
 
-        extensions.each{info ->
+        extensions.each { info ->
 
             log.debug "adding classpath for extension: ${info.name}"
-            def extBinDir = new File(info.rootPath,'bin')
+            def extBinDir = new File(info.rootPath, 'bin')
             if (extBinDir.exists()) classPath.addAll(extBinDir.listFiles(jarFilter))
 
-            def extLibDir = new File(info.rootPath,'lib')
+            def extLibDir = new File(info.rootPath, 'lib')
             if (extLibDir.exists()) classPath.addAll(extLibDir.listFiles(jarFilter))
 
-            def extClassesDir = new File(info.rootPath,'classes')
+            def extClassesDir = new File(info.rootPath, 'classes')
             if (extClassesDir.exists()) classPath.add(extClassesDir)
 
-            def resourcesDir = new File(info.rootPath,'resources')
+            def resourcesDir = new File(info.rootPath, 'resources')
             if (resourcesDir.exists()) classPath.add(resourcesDir)
 
         }
 
-        classPath.each{it -> log.debug it.canonicalPath}
+        classPath.each { it -> log.debug it.canonicalPath }
 
         classPath
 
@@ -74,15 +74,15 @@ class CommerceExtensionUtil {
         def templateEngine = new GStringTemplateEngine()
 
         def hybrisConfig = xmlParser.parse(localExtensionsFile)
-        def hybrisBinDir = Path.of(localExtensionsFile.parentFile.parent,'bin').toFile()
-        def bindMap = [HYBRIS_BIN_DIR:hybrisBinDir.absolutePath]
-        def resolvePath = {String path -> templateEngine.createTemplate(path).make(bindMap).toString()}
+        def hybrisBinDir = Path.of(localExtensionsFile.parentFile.parent, 'bin').toFile()
+        def bindMap = [HYBRIS_BIN_DIR: hybrisBinDir.absolutePath]
+        def resolvePath = { String path -> templateEngine.createTemplate(path).make(bindMap).toString() }
 
-        def parseExtensionInfo = {File it ->
+        def parseExtensionInfo = { File it ->
 
             def extensioninfo = xmlParser.parse(it)
             def extensionName = extensioninfo.extension[0].'@name'.text()
-            def requiresExtension = extensioninfo.extension[0].'requires-extension'.collect{it.'@name'.text()}
+            def requiresExtension = extensioninfo.extension[0].'requires-extension'.collect { it.'@name'.text() }
             def coremodule = extensioninfo.extension[0].'coremodule'.size() > 0
             def webmodule = extensioninfo.extension[0].'webmodule'.size() > 0
             def info = new CommerceExtensionInfo(
@@ -96,7 +96,7 @@ class CommerceExtensionUtil {
 
         }
 
-        def scanPath = {String path ->
+        def scanPath = { String path ->
 
             def extensions = [] as Set<CommerceExtensionInfo>
             def extensionPath = new File(resolvePath(path))
@@ -110,24 +110,27 @@ class CommerceExtensionUtil {
         }
 
         def allExtensions = [] as Set<CommerceExtensionInfo>
-        def paths = hybrisConfig.extensions[0].path.collect{it.'@dir'.text()} as List<String>
+        def paths = hybrisConfig.extensions[0].path.collect { it.'@dir'.text() } as List<String>
 
-        paths.each{path ->
-            println "searching extensions in path: ${path}"
+        paths.each { path ->
+            if (path == '\${HYBRIS_BIN_DIR}') {
+                path = bindMap.HYBRIS_BIN_DIR
+            }
+            println "searching extensions in path: $path"
             allExtensions.addAll(scanPath(path))
         }
 
         def coreExtensions = scanPath('$HYBRIS_BIN_DIR/platform/ext')
-        def allExtensionsMap = allExtensions.collectEntries{[(it.name):it]} as Map<String,CommerceExtensionInfo>
+        def allExtensionsMap = allExtensions.collectEntries { [(it.name): it] } as Map<String, CommerceExtensionInfo>
 
-        coreExtensions.each {allExtensionsMap.put(it.name,it)}
+        coreExtensions.each { allExtensionsMap.put(it.name, it) }
         def configuredExtensionNames = coreExtensions*.name
 
-        configuredExtensionNames += hybrisConfig.extensions[0].extension.collect{it.'@name'.text()}.findAll{it}
+        configuredExtensionNames += hybrisConfig.extensions[0].extension.collect { it.'@name'.text() }.findAll { it }
 
         // adding extensions configured with absolute path dir
-        hybrisConfig.extensions[0].extension.collect{it.'@dir'.text()}.findAll{it}.each{extBaseDir ->
-            def info = parseExtensionInfo(new File(resolvePath(extBaseDir),'extensioninfo.xml'))
+        hybrisConfig.extensions[0].extension.collect { it.'@dir'.text() }.findAll { it }.each { extBaseDir ->
+            def info = parseExtensionInfo(new File(resolvePath(extBaseDir), 'extensioninfo.xml'))
             allExtensionsMap[info.name] = info
             configuredExtensionNames << info.name
         }
@@ -135,13 +138,13 @@ class CommerceExtensionUtil {
         def requiredExtensions = [] as Set<CommerceExtensionInfo>
 
         def add
-        add = {String extName ->
+        add = { String extName ->
             log.debug "adding configured extension: ${extName}"
             def extInfo = allExtensionsMap[extName]
             if (extInfo) {
                 if (requiredExtensions.add(extInfo)) {
                     if (allExtensionsMap[extName] && allExtensionsMap[extName].requires) {
-                        allExtensionsMap[extName].requires.each{require ->
+                        allExtensionsMap[extName].requires.each { require ->
                             log.debug "adding required extension: ${require}"
                             // NOTE trampoline doesn't to work here
                             // add.trampoline(require)
@@ -154,14 +157,14 @@ class CommerceExtensionUtil {
             }
         }
 
-        configuredExtensionNames.each{add(it)}
+        configuredExtensionNames.each { add(it) }
 
         return requiredExtensions
 
     }
 
     static String resolveHome(String path) {
-        path.replace('~',System.getProperty('user.home'))
+        path.replace('~', System.getProperty('user.home'))
     }
 
 }
