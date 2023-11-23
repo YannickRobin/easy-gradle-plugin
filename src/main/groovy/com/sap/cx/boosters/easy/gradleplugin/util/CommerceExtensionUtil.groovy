@@ -3,15 +3,10 @@ package com.sap.cx.boosters.easy.gradleplugin.util
 import com.sap.cx.boosters.easy.gradleplugin.data.CommerceExtensionInfo
 import groovy.io.FileType
 import groovy.text.GStringTemplateEngine
-import org.slf4j.Logger
 
 import java.nio.file.Path
 
-import org.slf4j.LoggerFactory
-
 class CommerceExtensionUtil {
-
-    private static Logger LOG = LoggerFactory.getLogger(CommerceExtensionUtil)
 
     static Set<File> buildPlatformClassPath(String commercePlatformHome) {
 
@@ -25,13 +20,13 @@ class CommerceExtensionUtil {
         def commercePlatformDirectory = new File(commerceHomeDirectory,'bin/platform')
 
         if (!commercePlatformDirectory.exists()) {
-            LOG.error "commerce platform dir not found ${commercePlatformDirectory.absolutePath}"
+            println "commerce platform dir not found ${commercePlatformDirectory.absolutePath}"
             return classPath
         }
 
         def localExtensionsFile = new File(commerceHomeDirectory,'config/localextensions.xml')
         if (!localExtensionsFile.exists()) {
-            LOG.error "no localextensions.xml file found ${localExtensionsFile.absolutePath}"
+            println "no localextensions.xml file found ${localExtensionsFile.absolutePath}"
             return classPath
         }
 
@@ -48,7 +43,7 @@ class CommerceExtensionUtil {
 
         extensions.each{info ->
 
-            LOG.debug "adding classpath for extension: ${info.name}"
+            println "adding classpath for extension: ${info.name}"
             def extBinDir = new File(info.rootPath,'bin')
             if (extBinDir.exists()) classPath.addAll(extBinDir.listFiles(jarFilter))
 
@@ -63,7 +58,7 @@ class CommerceExtensionUtil {
 
         }
 
-        classPath.each{it -> LOG.debug it.canonicalPath}
+        classPath.each{it -> println it.canonicalPath}
 
         classPath
 
@@ -77,29 +72,33 @@ class CommerceExtensionUtil {
         def hybrisConfig = xmlParser.parse(localExtensionsFile)
         def hybrisBinDir = Path.of(localExtensionsFile.parentFile.parent,'bin').toFile()
         def bindMap = [HYBRIS_BIN_DIR:hybrisBinDir.absolutePath]
+        def resolvePath = {String path -> templateEngine.createTemplate(path).make(bindMap).toString()}
+
+        def parseExtensionInfo = {File it ->
+
+            def extensioninfo = xmlParser.parse(it)
+            def extensionName = extensioninfo.extension[0].'@name'.text()
+            def requiresExtension = extensioninfo.extension[0].'requires-extension'.collect{it.'@name'.text()}
+            def coremodule = extensioninfo.extension[0].'coremodule'.size() > 0
+            def webmodule = extensioninfo.extension[0].'webmodule'.size() > 0
+            def info = new CommerceExtensionInfo(
+                    name: extensionName,
+                    rootPath: it.parentFile,
+                    coremodule: coremodule,
+                    webmodule: webmodule,
+                    requires: requiresExtension
+            )
+            info
+
+        }
 
         def scanPath = {String path ->
 
             def extensions = [] as Set<CommerceExtensionInfo>
-            def extensionPath = new File(templateEngine.createTemplate(path).make(bindMap).toString())
+            def extensionPath = new File(resolvePath(path))
             extensionPath.traverse(type: FileType.FILES, nameFilter: 'extensioninfo.xml', maxDepth: 3) {
-
-                LOG.debug "parsing extensioninfo file: ${it}"
-
-                def extensioninfo = xmlParser.parse(it)
-                def extensionName = extensioninfo.extension[0].'@name'.text()
-                def requiresExtension = extensioninfo.extension[0].'requires-extension'.collect{it.'@name'.text()}
-                def coremodule = extensioninfo.extension[0].'coremodule'.size() > 0
-                def webmodule = extensioninfo.extension[0].'webmodule'.size() > 0
-                def info = new CommerceExtensionInfo(
-                        name: extensionName,
-                        rootPath: it.parentFile,
-                        coremodule: coremodule,
-                        webmodule: webmodule,
-                        requires: requiresExtension
-                )
-                extensions << info
-
+                println "parsing extensioninfo file: ${it}"
+                extensions << parseExtensionInfo(it)
             }
 
             return extensions
@@ -110,7 +109,7 @@ class CommerceExtensionUtil {
         def paths = hybrisConfig.extensions[0].path.collect{it.'@dir'.text()} as List<String>
 
         paths.each{path ->
-            LOG.debug "searching extensions in path: ${path}"
+            println "searching extensions in path: ${path}"
             allExtensions.addAll(scanPath(path))
         }
 
@@ -120,17 +119,25 @@ class CommerceExtensionUtil {
 
         def configuredExtensionNames = coreExtensions*.name
         configuredExtensionNames += hybrisConfig.extensions[0].extension.collect{it.'@name'.text()}
+
+        // adding extensions configured with absolute path dir
+        hybrisConfig.extensions[0].extension.collect{it.'@dir'.text()}.findAll{it}.each{extBaseDir ->
+            def info = parseExtensionInfo(new File(resolvePath(extBaseDir),'extensioninfo.xml'))
+            allExtensions << info
+            configuredExtensionNames << info.name
+        }
+
         def requiredExtensions = [] as Set<CommerceExtensionInfo>
 
         def add
         add = {String extName ->
-            LOG.debug "adding configured extension: ${extName}"
+            println "adding configured extension: ${extName}"
             def extInfo = allExtensionsMap[extName]
             if (extInfo) {
                 if (requiredExtensions.add(extInfo)) {
                     if (allExtensionsMap[extName] && allExtensionsMap[extName].requires) {
                         allExtensionsMap[extName].requires.each{require ->
-                            LOG.debug "adding required extension: ${require}"
+                            println "adding required extension: ${require}"
                             // NOTE trampoline doesn't to work here
                             // add.trampoline(require)
                             add(require)
@@ -138,7 +145,7 @@ class CommerceExtensionUtil {
                     }
                 }
             } else {
-                LOG.warn "skipped invalid extension ${extName}"
+                println "skipped invalid extension ${extName}"
             }
         }
 

@@ -35,6 +35,7 @@ class DumpPlatformClassPathTask extends DefaultTask {
 
     @TaskAction
     def dumpClassPath() {
+        println "commercePlatformHome: ${commercePlatformHome}"
         def classPath = CommerceExtensionUtil.buildPlatformClassPath(this.commercePlatformHome)
         classPath.each { println it.canonicalPath }
     }
