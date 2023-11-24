@@ -38,7 +38,7 @@ In this example, we will create an easy local repository `easy-sample-repo` that
 - `cd easy-sample-repo`
 - Configure the easy repository in SAP Commerce Cloud backoffice as per instructions in [Configuring a Local Repository Documentation](https://sap.github.io/easy-extension-framework/configuring-an-easy-repository-in-backoffice/#configuring-a-local-repository)
 - Run the command `gradle init --type basic --dsl groovy --no-incubating --project-name easy-sample-repo`
-- Add the following content in `settings.gradle` file as the **_first line_**
+- If you are running the local setup of the plugin and not the published one. Add the following content in `settings.gradle` file as the **_first line_**
   ```  
    pluginManagement {
      repositories {
