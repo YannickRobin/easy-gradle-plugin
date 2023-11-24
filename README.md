@@ -77,8 +77,80 @@ In this example, we will generate an easy extension `helloworld` in local reposi
   BUILD SUCCESSFUL in 1s
   1 actionable task: 1 executed
   ```
-
+- Change the current director to your extension `cd helloworld`
+- Run the command `gradle wrapper` to generate Gradle wrapper files
+- Execute tests `./gradlew test` to check your extension is correctly setup
 > You can  now implement the extension as per the instructions available at [Easy Extension Documentation](https://sap.github.io/easy-extension-framework/easy-extension) 
+
+## Update Repository
+- Run the command `./gradlew easy-update-repo` to list all available extensions in the repository
+  ```
+  > Task :easy-update-repo
+  API executed successfully. HTTP status: 200
+  {
+  "eventId": "00000001",
+  "message": "Update request for repository easy-sample-repo submitted"
+  }
+  
+  BUILD SUCCESSFUL in 3s
+  1 actionable task: 1 executed
+  ```
+
+## List Easy Extensions
+- Run the command `./gradlew easy-ext-list` to list all available extensions in the repository
+
+    ```
+    > Task :easy-ext-list
+  API executed successfully. HTTP status: 200
+  [
+    ...
+  ]
+    
+    BUILD SUCCESSFUL in 1s
+    1 actionable task: 1 executed
+    ```
+
+## Install Extension
+- Run the command `./gradlew easy-ext-install -PextensionId=helloworld` to install `helloworld` extension of the repository
+  ```
+  > Task :easy-ext-install
+  API executed successfully. HTTP status: 200
+  {
+  "eventId": "00000002",
+  "message": "Installation request for extension helloworld submitted."
+  }
+  
+  BUILD SUCCESSFUL in 3s
+  1 actionable task: 1 executed
+  ```
+
+## Update Extension
+- Run the command `./gradlew easy-ext-reinstall -PextensionId=helloworld` to reinstall/reload/update `helloworld` extension of the repository
+  ```
+  > Task :easy-ext-reinstall
+  API executed successfully. HTTP status: 200
+  {
+  "eventId": "00000003",
+  "message": "Re-installation/reload request for extension helloworld submitted."
+  }
+  
+  BUILD SUCCESSFUL in 2s
+  1 actionable task: 1 executed
+  ```
+
+## Uninstall Extension
+- Run the command `./gradlew easy-ext-uninstall -PextensionId=helloworld` to uninstall `helloworld` extension of the repository
+  ```
+  > Task :easy-ext-uninstall
+  API executed successfully. HTTP status: 200
+  {
+  "eventId": "00000004",
+  "message": "Uninstallation request for extension helloworld submitted."
+  }
+  
+  BUILD SUCCESSFUL in 1s
+  1 actionable task: 1 executed
+  ```
 
 ## Generate Model and Enum classes for Easy Types
 ### Prerequisites
@@ -173,76 +245,6 @@ In this example, we will generate an easy extension `helloworld` in local reposi
        }
 
     ```
-
-## Update Repository
-- Run the command `./gradlew easy-update-repo` to list all available extensions in the repository
-  ```
-  > Task :easy-update-repo
-  API executed successfully. HTTP status: 200
-  {
-  "eventId": "00000001",
-  "message": "Update request for repository easy-sample-repo submitted"
-  }
-  
-  BUILD SUCCESSFUL in 3s
-  1 actionable task: 1 executed
-  ```
-
-## List Easy Extensions
-- Run the command `./gradlew easy-ext-list` to list all available extensions in the repository
-
-    ```
-    > Task :easy-ext-list
-  API executed successfully. HTTP status: 200
-  [
-    ...
-  ]
-    
-    BUILD SUCCESSFUL in 1s
-    1 actionable task: 1 executed
-    ```
-
-## Install Extension
-- Run the command `./gradlew easy-ext-install -PextensionId=helloworld` to install `helloworld` extension of the repository
-  ```
-  > Task :easy-ext-install
-  API executed successfully. HTTP status: 200
-  {
-  "eventId": "00000002",
-  "message": "Installation request for extension helloworld submitted."
-  }
-  
-  BUILD SUCCESSFUL in 3s
-  1 actionable task: 1 executed
-  ```
-
-## Update Extension
-- Run the command `./gradlew easy-ext-reinstall -PextensionId=helloworld` to reinstall/reload/update `helloworld` extension of the repository
-  ```
-  > Task :easy-ext-reinstall
-  API executed successfully. HTTP status: 200
-  {
-  "eventId": "00000003",
-  "message": "Re-installation/reload request for extension helloworld submitted."
-  }
-  
-  BUILD SUCCESSFUL in 2s
-  1 actionable task: 1 executed
-  ```
-
-## Uninstall Extension
-- Run the command `./gradlew easy-ext-uninstall -PextensionId=helloworld` to uninstall `helloworld` extension of the repository
-  ```
-  > Task :easy-ext-uninstall
-  API executed successfully. HTTP status: 200
-  {
-  "eventId": "00000004",
-  "message": "Uninstallation request for extension helloworld submitted."
-  }
-  
-  BUILD SUCCESSFUL in 1s
-  1 actionable task: 1 executed
-  ```
 
 ## All Tasks
 - Run the command `./gradlew tasks --group easy` to see all the task available with this plugin
