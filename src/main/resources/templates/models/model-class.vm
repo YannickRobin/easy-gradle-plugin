@@ -114,7 +114,7 @@ class ${itemType.modelClassName} extends $superClassName {
     * @param value the $attributeQualifier
     */
     @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
-    $attributeClass set$capitalizedQualifier(final $attributeClass value) {
+    void set$capitalizedQualifier(final $attributeClass value) {
         set$capitalizedQualifier(value, null)
     }
 
@@ -126,7 +126,7 @@ class ${itemType.modelClassName} extends $superClassName {
     * @throws IllegalArgumentException if localization key cannot be mapped to data language
     */
     @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
-    $attributeClass set$capitalizedQualifier(final $attributeClass value, final Locale loc) {
+    void set$capitalizedQualifier(final $attributeClass value, final Locale loc) {
         getPersistenceContext().setLocalizedValue($attributeQualifier.toUpperCase(), loc, value)
     }
     #else

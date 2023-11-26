@@ -62,7 +62,7 @@ enum ${enumType.code} implements HybrisEnumValue {
     * @return code of type
     */
     @Override
-    public String getType() {
+    String getType() {
         return SIMPLE_CLASSNAME
     }
 }
