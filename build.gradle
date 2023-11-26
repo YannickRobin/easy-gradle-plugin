@@ -49,3 +49,8 @@ dependencies {
     implementation 'com.github.spullara.mustache.java:compiler:0.9.10'
     testImplementation 'org.spockframework:spock-core:2.3-groovy-3.0'
 }
+
+tasks.register('spockTest',Test) {
+    group 'verification'
+    useJUnitPlatform()
+}
