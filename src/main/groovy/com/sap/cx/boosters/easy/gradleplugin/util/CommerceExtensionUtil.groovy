@@ -38,15 +38,21 @@ class CommerceExtensionUtil {
 
          classPath[PLATFORM]= [] as Set<File>
 
-        new File(commercePlatformDirectory,'ext').traverse(type: FileType.FILES, nameFilter: /^.*ext\/.*\/lib\/.*\.jar$/) {
+        /*
+        new File(commercePlatformDirectory,'ext').traverse(type: FileType.FILES, nameFilter: ~/^.*\/ext\/.*\/lib\/.*.jar$/) {
             classPath[PLATFORM] << it
         }
 
-        new File(commercePlatformDirectory,'bootstrap/bin').traverse(type: FileType.FILES, nameFilter: /^.bootstrap\/bin\/.*\.jar$/) {
+        new File(commercePlatformDirectory,'bootstrap/bin').traverse(type: FileType.FILES, nameFilter: ~/^.*\/bootstrap\/bin\/.*.jar$/) {
+            classPath[PLATFORM] << it
+        }
+        */
+
+        commercePlatformDirectory.traverse(type: FileType.FILES, nameFilter: ~/.*\.jar$/) {
             classPath[PLATFORM] << it
         }
 
-        commercePlatformDirectory.traverse(type: FileType.DIRECTORIES, nameFilter: /^.*ext\/.*\/classes$/) {
+        commercePlatformDirectory.traverse(type: FileType.DIRECTORIES, nameFilter: 'classes') {
             if (!it.absolutePath.contains('eclipsebin')) classPath[PLATFORM] << it
         }
 
