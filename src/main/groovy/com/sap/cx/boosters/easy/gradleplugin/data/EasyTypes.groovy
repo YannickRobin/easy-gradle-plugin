@@ -4,7 +4,7 @@ class EasyTypes {
     Set<CollectionType> collectiontypes = new HashSet<>()
     Set<EnumerationType> enumtypes = new HashSet<>()
     Set<MapType> maptypes = new HashSet<>()
-    Set<RelationType> relationtypes = new HashSet<>()
+    Set<RelationType> relations = new HashSet<>()
     Set<ItemType> itemtypes = new HashSet<>()
 
     EasyTypes(){
@@ -35,12 +35,12 @@ class EasyTypes {
         this.maptypes = maptypes
     }
 
-    Set<RelationType> getRelationtypes() {
-        return relationtypes
+    Set<RelationType> getRelations() {
+        return relations
     }
 
-    void setRelationtypes(Set<RelationType> relationtypes) {
-        this.relationtypes = relationtypes
+    void setRelations(Set<RelationType> relations) {
+        this.relations = relations
     }
 
     Set<ItemType> getItemtypes() {

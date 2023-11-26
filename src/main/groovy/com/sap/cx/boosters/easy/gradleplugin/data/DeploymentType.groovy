@@ -3,6 +3,7 @@ package com.sap.cx.boosters.easy.gradleplugin.data
 class DeploymentType {
     String table
     String typecode
+    String propstable
 
     DeploymentType(){
         super()
@@ -22,5 +23,13 @@ class DeploymentType {
 
     void setTypecode(String typecode) {
         this.typecode = typecode
+    }
+
+    String getPropstable() {
+        return propstable
+    }
+
+    void setPropstable(String propstable) {
+        this.propstable = propstable
     }
 }

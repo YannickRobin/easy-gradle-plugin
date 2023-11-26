@@ -10,62 +10,59 @@
 package $package
 
 import de.hybris.platform.core.HybrisEnumValue
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ConcurrentMap
 
-class ${enumType.code} implements HybrisEnumValue {
-    static final String _TYPECODE = "${enumType.code}"
-    static final String SIMPLE_CLASSNAME = "${enumType.code}"
-    static final ConcurrentMap<String, HybrisEnumValue> cache = new ConcurrentHashMap>String, HybrisEnumValue>()
+/**
+* Generated easy enum ${enumType.code} declared in easy extension.
+*/
+enum ${enumType.code} implements HybrisEnumValue {
 
 #foreach($enumValue in ${enumType.values})
-    static final ${enumType.code} ${enumValue.code.toUpperCase()} = valueOf("$enumValue.code")
+    /**
+    * Generated easy enum value for ${enumType.code}.${enumValue.code.toUpperCase()} declared in easy extension.
+    */
+    #if($foreach.hasNext)
+    ${enumValue.code.toUpperCase()}("$enumValue.code"),
+    #else
+    ${enumValue.code.toUpperCase()}("$enumValue.code")
+    #end
+
 #end
 
+    /**<i>Generated enum type code constant.</i>*/
+    public static final String _TYPECODE = "${enumType.code}"
+
+    /**<i>Generated simple class name constant.</i>*/
+    public static final String SIMPLE_CLASSNAME = "${enumType.code}"
+
+    /** The code of this enum.*/
+    private final String code
+
+    /**
+    * Creates a new enum value for this enum type.
+    *
+    * @param code the enum value code
+    */
     private ${enumType.code}(final String code) {
         this.code = code.intern()
-        this.codeLowerCase = this.code.toLowerCase().intern()
     }
 
-    @Override
-    String getType() {
-        return SIMPLE_CLASSNAME
-    }
-
+    /**
+    * Gets the code of this enum value.
+    *
+    * @return code of value
+    */
     @Override
     String getCode() {
         return this.code
     }
 
-    static ${enumType.code} valueOf(final String code) {
-        final String key = code.toLowerCase();
-        ${enumType.code} result = cache.get(key);
-        if (result == null) {
-            ${enumType.code} newValue = new ${enumType.code}(code)
-            ${enumType.code} previous = cache.putIfAbsent(key, newValue)
-            result = previous != null ? previous : newValue
-        }
-        return result;
-    }
-
+    /**
+    * Gets the type this enum value belongs to.
+    *
+    * @return code of type
+    */
     @Override
-    boolean equals(final Object obj) {
-        try {
-            final HybrisEnumValue enum2 = (HybrisEnumValue) obj
-            return this.is(enum2) || (enum2 != null && !this.getClass().isEnum() && !enum2.getClass().isEnum() && this.getType().equalsIgnoreCase(enum2.getType()) && this.getCode().equalsIgnoreCase(enum2.getCode()))
-        } catch (final ClassCastException e) {
-            return false
-        }
-    }
-
-    @Override
-    int hashCode() {
-        return this.codeLowerCase.hashCode()
-    }
-
-    @Override
-    String toString() {
-        return this.code.toString()
+    public String getType() {
+        return SIMPLE_CLASSNAME
     }
 }
-

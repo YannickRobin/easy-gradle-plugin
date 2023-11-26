@@ -5,6 +5,7 @@ class AttributeType {
     List<LocalizedString> name
     String type
     String typeClass
+    List<String> typeClassArguments
     Map<String, Boolean> modifiers
     PersistenceType persistence
 
@@ -65,6 +66,14 @@ class AttributeType {
 
     void setPersistence(PersistenceType persistence) {
         this.persistence = persistence
+    }
+
+    List<String> getTypeClassArguments() {
+        return typeClassArguments
+    }
+
+    void setTypeClassArgument(List<String> typeClassArguments) {
+        this.typeClassArguments = typeClassArguments
     }
 
 }

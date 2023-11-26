@@ -102,7 +102,7 @@ class GenerateModelClassesTask extends AbstractEasyExtensionTask {
             this.getEasyTypes().enumtypes.each {
                 logger.info("Generating enumeration class for enum type: $it.code")
                 if (enumsDirectory.exists()) {
-                    File targetFile = Path.of(enumsDirectory.absolutePath, "${it.name}.groovy").toFile()
+                    File targetFile = Path.of(enumsDirectory.absolutePath, "${it.code}.groovy").toFile()
                     logger.info("Created enums class: $targetFile")
                     if (targetFile.exists()) {
                         targetFile.createNewFile()

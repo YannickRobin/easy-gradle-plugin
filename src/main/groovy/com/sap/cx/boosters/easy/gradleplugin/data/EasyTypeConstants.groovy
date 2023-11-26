@@ -39,6 +39,9 @@ class EasyTypeConstants {
             'java.lang.Short',
             'java.lang.String',
             'java.lang.Character',
-            'java.util.Locale'
+            'java.util.Locale',
+            'java.util.List',
+            'java.util.Set',
+            'java.util.Map'
     ]
 }

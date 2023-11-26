@@ -4,7 +4,7 @@ class MapType {
     String code
     List<LocalizedString> name
     String argumentType
-    String returnType
+    String returntype
 
     MapType(){
         super()
@@ -34,11 +34,11 @@ class MapType {
         this.argumentType = argumentType
     }
 
-    String getReturnType() {
-        return returnType
+    String getReturntype() {
+        return returntype
     }
 
-    void setReturnType(String returnType) {
-        this.returnType = returnType
+    void setReturntype(String returntype) {
+        this.returntype = returntype
     }
 }

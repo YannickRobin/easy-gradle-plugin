@@ -13,6 +13,14 @@ import ${itemType.superTypeModelClass}
 #foreach($attribute in ${itemType.attributes})
 #if(!$excludedImports.contains($attribute.typeClass))
 import ${attribute.typeClass}
+#if($attribute.typeClassArguments != $null)
+#foreach($argument in $attribute.typeClassArguments)
+#if(!$excludedImports.contains($argument))
+import $argument
+#end
+#end
+
+#end
 #end
 #end
 import de.hybris.bootstrap.annotations.Accessor
@@ -20,39 +28,79 @@ import de.hybris.platform.servicelayer.model.ItemModelContext
 
 #set($lastDotIndex = $itemType.superTypeModelClass.lastIndexOf('.'))
 #set($superClassName = $itemType.superTypeModelClass.substring($lastDotIndex+1))
+/**
+* Generated model class for easy type ${itemType.code}.
+*/
 class ${itemType.modelClassName} extends $superClassName {
 
-    static final String _TYPECODE = "$itemType.code"
+    /**<i>Generated model type code constant.</i>*/
+    public static final String _TYPECODE = "$itemType.code"
 #foreach($attribute in ${itemType.attributes})
 
-    static final String $attribute.qualifier.toUpperCase() = "$attribute.qualifier"
+    /** <i>Generated constant</i> - Attribute key of <code>${itemType.code}.$attribute.qualifier</code>. */
+    public static final String $attribute.qualifier.toUpperCase() = "$attribute.qualifier"
 #end
 
+    /**
+    * <i>Generated constructor</i> - Default constructor for generic creation.
+    */
     ${itemType.modelClassName}() {
         super()
     }
 
+    /**
+    * <i>Generated constructor</i> - Default constructor for creation with existing context
+    * @param ctx the model context to be injected, must not be null
+    */
     ${itemType.modelClassName}(final ItemModelContext ctx) {
         super(ctx)
     }
 
 #foreach($attribute in ${itemType.attributes})
     #set($lastDotIndex = $attribute.typeClass.lastIndexOf('.'))
+
+    #if($attribute.typeClassArguments != $null)
+    #set($arguments = "")
+    #foreach($argument in $attribute.typeClassArguments)
+        #set($lastArgumentDotIndex = $argument.lastIndexOf('.'))
+        #if($foreach.hasNext)
+            #set($arguments = "$arguments$argument.substring($lastArgumentDotIndex+1), ")
+        #else
+            #set($arguments = "$arguments$argument.substring($lastArgumentDotIndex+1)")
+        #end
+    #end
+    #set($attributeClass = $attribute.typeClass.substring($lastDotIndex+1)+'<'+$arguments+'>')
+    #else
     #set($attributeClass = $attribute.typeClass.substring($lastDotIndex+1))
+    #end
     #set($attributeQualifier = $attribute.qualifier)
     #set($firstChar = $attributeQualifier.substring(0, 1).toUpperCase())
     #set($capitalizedQualifier = $firstChar + $attributeQualifier.substring(1))
     #if($attribute.type.startsWith("localized"))
+    /**
+    * <i>Generated method</i> - Getter of the <code>${itemType.code}.$attributeQualifier</code> attribute.
+    * @return the $attributeQualifier
+    */
     @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
     $attributeClass get$capitalizedQualifier() {
         return get$capitalizedQualifier(null)
     }
 
+    /**
+    * <i>Generated method</i> - Getter of the <code>${itemType.code}.$attributeQualifier</code> attribute.
+    * @param loc the value localization key
+    * @return the $attributeQualifier
+    * @throws IllegalArgumentException if localization key cannot be mapped to data language
+    */
     @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
     $attributeClass get$capitalizedQualifier(final Locale loc) {
         return getPersistenceContext().getLocalizedValue($attributeQualifier.toUpperCase(), loc)
     }
     #else
+    /**
+    * <i>Generated method</i> - Getter of the <code>${itemType.code}.$attributeQualifier</code> attribute.
+    * @return the $attributeQualifier
+    */
     @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
     $attributeClass get$capitalizedQualifier() {
         return getPersistenceContext().getPropertyValue($attributeQualifier.toUpperCase())
@@ -60,16 +108,33 @@ class ${itemType.modelClassName} extends $superClassName {
     #end
 
     #if($attribute.type.startsWith("localized"))
+    /**
+    * <i>Generated method</i> - Setter of <code>${itemType.code}.$attributeQualifier</code> attribute.
+    *
+    * @param value the $attributeQualifier
+    */
     @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
     $attributeClass set$capitalizedQualifier(final $attributeClass value) {
         set$capitalizedQualifier(value, null)
     }
 
+    /**
+    * <i>Generated method</i> - Setter of <code>${itemType.code}.$attributeQualifier</code> attribute.
+    *
+    * @param value the $attributeQualifier
+    * @param loc the value localization key
+    * @throws IllegalArgumentException if localization key cannot be mapped to data language
+    */
     @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
     $attributeClass set$capitalizedQualifier(final $attributeClass value, final Locale loc) {
         getPersistenceContext().setLocalizedValue($attributeQualifier.toUpperCase(), loc, value)
     }
     #else
+    /**
+    * <i>Generated method</i> - Setter of <code>${itemType.code}.$attributeQualifier</code> attribute.
+    *
+    * @param value the $attributeQualifier
+    */
     @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.SETTER)
     void set$capitalizedQualifier(final $attributeClass value) {
         getPersistenceContext().setPropertyValue($attributeQualifier.toUpperCase(), value)
