@@ -22,6 +22,7 @@ class EasyPlugin implements Plugin<Project> {
             project.sourceSets.main.groovy.srcDirs += 'src/main/groovy'
             project.sourceSets.main.groovy.srcDirs += 'gensrc/main/groovy'
             project.sourceSets.test.groovy.srcDirs += 'src/test/groovy'
+            project.sourceSets.test.groovy.srcDirs += 'src/e2etest/groovy'
             project.sourceSets.test.groovy.srcDirs += 'gensrc/test/groovy'
         }
 
@@ -44,9 +45,6 @@ class EasyPlugin implements Plugin<Project> {
             )
             project.dependencies.add('implementation', project.extensions.getByName(EXT_COMMERCE_PLATFORM_LIBRARIES))
         }
-
-        project.dependencies.add('implementation', 'org.codehaus.groovy:groovy-all:3.0.13')
-        project.dependencies.add('testImplementation', 'org.junit.vintage:junit-vintage-engine:5.10.1')
 
         project.tasks.withType(Test).configureEach {
             doFirst {

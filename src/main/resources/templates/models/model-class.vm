@@ -13,13 +13,12 @@ import ${itemType.superTypeModelClass}
 #foreach($attribute in ${itemType.attributes})
 #if(!$excludedImports.contains($attribute.typeClass))
 import ${attribute.typeClass}
+#end
 #if($attribute.typeClassArguments != $null)
 #foreach($argument in $attribute.typeClassArguments)
 #if(!$excludedImports.contains($argument))
 import $argument
 #end
-#end
-
 #end
 #end
 #end
