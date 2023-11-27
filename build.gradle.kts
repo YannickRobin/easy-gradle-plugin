@@ -33,8 +33,7 @@ kotlin {
 }
 
 gradlePlugin {
-    website = "https://github.com/apanwar/easy-gradle-plugin"
-    vcsUrl = "https://github.com/apanwar/easy-gradle-plugin"
+    
     plugins {
         create("easy-gradle-plugin") {
             id = "${group}.${rootProject.name}"
