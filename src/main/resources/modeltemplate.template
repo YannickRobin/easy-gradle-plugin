@@ -1,0 +1,31 @@
+package $package
+
+import de.hybris.bootstrap.annotations.Accessor
+import de.hybris.platform.servicelayer.model.ItemModelContext
+import $superTypeModelClass
+
+class $modelClassName extends $superTypeModelClass {
+
+    public static final String _TYPECODE = "$modelClassName"
+    <% for (attribute in attributes) { %>
+    public static final String $attribute.qualifier.toUpperCase() = "$attribute.qualifier"
+
+    <%}%>
+
+    $modelClassName(){
+        super()
+    }
+
+    $modelClassName(final ItemModelContext ctx){
+        super(ctx)
+    }
+
+    <% for (attribute in attributes) { %>
+    @Accessor(qualifier = $attribute.qualifier.toUpperCase(), type = Accessor.Type.GETTER)
+    String getCode(){
+        return getPersistenceContext().getPropertyValue(CODE)
+    }
+
+    <%}%>
+
+}

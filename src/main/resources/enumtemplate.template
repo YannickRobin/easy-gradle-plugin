@@ -1,0 +1,75 @@
+package $package
+
+import de.hybris.platform.core.HybrisEnumValue
+
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
+
+class $enumType implements HybrisEnumValue {
+
+    public static final String _TYPECODE = "$enumType"
+    public static String SIMPLE_CLASSNAME = ""$enumType"
+    private static final ConcurrentMap<String, HybrisEnumValue> cache = new ConcurrentHashMap<String, HybrisEnumValue>()
+
+    private final String code
+    private final String codeLowerCase
+    private static final long serialVersionUID = 0L
+
+    <% for (enumValue in enumValues) { %>
+    public static final $enumType $enumValue.toUpperCase() = valueOf("$enumValue")
+
+    <%}%>
+
+    private $enumType(final String code) {
+        this.code = code.intern()
+        this.codeLowerCase = this.code.toLowerCase().intern()
+    }
+
+    @Override
+    String getType() {
+        return SIMPLE_CLASSNAME
+    }
+
+    @Override
+    String getCode() {
+        return this.code
+    }
+
+    static $enumType valueOf(final String code) {
+        final String key = code.toLowerCase();
+        $enumType result = cache.get(key);
+        if (result == null) {
+            $enumType newValue = new $enumType(code)
+            $enumType previous = cache.putIfAbsent(key, newValue)
+            result = previous != null ? previous : newValue
+        }
+        return result;
+    }
+
+    @Override
+    boolean equals(final Object obj) {
+        try
+        {
+            final HybrisEnumValue enum2 = (HybrisEnumValue) obj
+
+            return this.is(enum2) || (enum2 != null && !this.getClass().isEnum() && !enum2.getClass().isEnum() && this.getType().equalsIgnoreCase(enum2.getType()) && this.getCode().equalsIgnoreCase(enum2.getCode()))
+        }
+        catch (final ClassCastException e)
+        {
+            return false
+        }
+    }
+
+    @Override
+    int hashCode()
+    {
+        return this.codeLowerCase.hashCode()
+    }
+
+    @Override
+    String toString()
+    {
+        return this.code.toString()
+    }
+
+}
