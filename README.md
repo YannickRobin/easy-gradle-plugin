@@ -42,9 +42,9 @@ In this example, we will create an easy local repository `easy-sample-repo` that
   ```  
    pluginManagement {
      repositories {
+       mavenLocal()
        gradlePluginPortal()
        mavenCentral()
-       mavenLocal()
      }
    }
   ```  
