@@ -154,7 +154,7 @@ In this example, we will generate an easy extension `helloworld` in local reposi
 
 ## Generate Model and Enum classes for Easy Types
 ### Prerequisites
-  - Define the Easy type definitions in `easytype.json` file, for example:
+  - Define the Easy type definitions in `easytypes.json` file, for example:
     ```json
       {
         "itemtypes" : [
