@@ -6,16 +6,5 @@
  */
 
 plugins {
-    id 'io.github.yannickrobin.easy-gradle-plugin' version '0.0.3'
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+    id 'io.github.yannickrobin.easy-gradle-plugin' version '0.0.4'
 }

@@ -2,12 +2,8 @@
     "groupId": "${EASY_EXTENSION_BASE_PACKAGE}",
     "id": "${EASY_EXTENSION_ID}",
     "name": "${EASY_EXTENSION_ID}",
-    "version": {
-      "available": "0.0.1"
-    },
-    "easyVersion": {
-      "available": "${EASY_VERSION}"
-    },
+    "version": "0.0.1",
+    "easyVersion": "${EASY_VERSION}",
     "requires": {
       "easy" : [],
       "commerce": []

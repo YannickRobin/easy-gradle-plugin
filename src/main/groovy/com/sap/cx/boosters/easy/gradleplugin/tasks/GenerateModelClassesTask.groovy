@@ -46,23 +46,23 @@ class GenerateModelClassesTask extends AbstractEasyExtensionTask {
     }
 
     private void validatePrerequisites() {
-        if (!project.projectDir.listFiles().any { it.name == "easy.json" }) {
+        if (!project.projectDir.listFiles().any { it.name == 'easy.json' }) {
             throw new GroovyException("The models classes can's be generated from outside of the easy extension directory.")
         }
 
-        if (!project.projectDir.listFiles().any { it.name == "easytypes.json" }) {
+        if (!Path.of(project.projectDir.absolutePath, 'src/main/resources/easytypes.json').toFile().exists()) {
             throw new GroovyException("The models classes can's be generated without easy type definitions in the easy extension.")
         }
     }
 
     private void initializeProperties() {
         this.easyProperties = new Properties()
-        this.easyProperties.load(new FileInputStream(new File(project.projectDir, "easy.properties")))
+        this.easyProperties.load(new FileInputStream(Path.of(project.projectDir.absolutePath, 'src/main/resources/easy.properties').toFile()))
         ObjectMapper mapper = new ObjectMapper()
-        this.easyExtension = mapper.readValue(new File(project.projectDir, "easy.json"), EasyExtension.class)
-        File easyTypeDefinitions = new File(project.projectDir, "easytypes.json")
+        this.easyExtension = mapper.readValue(new File(project.projectDir, 'easy.json'), EasyExtension.class)
+        File easyTypeDefinitions = Path.of(project.projectDir.absolutePath, 'src/main/resources/easytypes.json').toFile()
         if (easyTypeDefinitions?.exists()) {
-            this.easyTypes = mapper.readValue(new File(project.projectDir, "easytypes.json"), EasyTypes.class)
+            this.easyTypes = mapper.readValue(easyTypeDefinitions, EasyTypes.class)
         }
     }
 
