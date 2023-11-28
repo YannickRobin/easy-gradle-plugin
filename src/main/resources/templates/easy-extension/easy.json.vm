@@ -1,0 +1,23 @@
+{
+    "groupId": "${EASY_EXTENSION_BASE_PACKAGE}",
+    "id": "${EASY_EXTENSION_ID}",
+    "name": "${EASY_EXTENSION_ID}",
+    "version": {
+      "available": "0.0.1"
+    },
+    "easyVersion": {
+      "available": "${EASY_VERSION}"
+    },
+    "requires": {
+      "easy" : [],
+      "commerce": []
+    },
+    "description": "${EASY_EXTENSION_DESCRIPTION}",
+    "documentation": "",
+    "authors": [
+      "${EASY_EXTENSION_AUTHORS}"
+    ],
+    "vendor": "SAP",
+    "tags": [
+    ]
+}

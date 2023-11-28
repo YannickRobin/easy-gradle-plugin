@@ -1,0 +1,10 @@
+logger.info "[${extension.id}] registering Spring beans for ..."
+
+println "Registering core beans for ${extension.id}"
+
+easyCoreBeans {
+    helloWorldService(${EASY_EXTENSION_PACKAGE_NAME}.service.HelloWorldService)
+    helloWorldController(${EASY_EXTENSION_PACKAGE_NAME}.controller.HelloWorldController)
+}
+
+logger.info "[${extension.id}] beans registered ..."

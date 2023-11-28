@@ -1,0 +1,25 @@
+INSERT_UPDATE EasyRestGroup;name[unique=true]
+;${EASY_EXTENSION_ID}
+
+INSERT_UPDATE EasyRest  ;name[unique=true];easyRestGroup(name);path[unique=true];ssl;method(code);authenticationMethod(code);format(code);contentType(code);springBean;script;swaggerSummary;swaggerDescription;swaggerParameters[allownull=true];swaggerRequestBody[allownull=true];swaggerResponses[allownull=true];csrf
+; hello ;${EASY_EXTENSION_ID};${EASY_EXTENSION_ID}/hello;true;GET;NONE;NONE;JSON;helloWorldController;;;;"[
+    {
+        ""in"":""query"",
+        ""name"":""firstname"",
+        ""description"":""Your firstname"",
+        ""required"":true,
+        ""type"":""string""
+    }
+]";;"{
+""200"":
+    {
+        ""description"" : ""Hello message"",
+        ""content"" : {
+            ""text/plain"" : {
+                ""schema"" : {
+                    ""type"" : ""string""
+                }
+            }
+        }
+    }
+}";false

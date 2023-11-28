@@ -1,0 +1,2 @@
+REMOVE EasyRest; name[unique = true]; path[unique = true]
+               ; hello    ; ${EASY_EXTENSION_ID}/hello
