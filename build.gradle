@@ -15,7 +15,7 @@ plugins {
 // to the rootProject.name in settings.gradle
 // or the name of the root folder of the plugin project
 group 'io.github.yannickrobin'
-version '0.0.3'
+version '0.0.4'
 
 gradlePlugin {
     website = 'https://github.com/YannickRobin/easy-gradle-plugin'

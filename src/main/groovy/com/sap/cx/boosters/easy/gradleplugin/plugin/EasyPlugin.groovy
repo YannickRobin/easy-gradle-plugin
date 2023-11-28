@@ -46,6 +46,8 @@ class EasyPlugin implements Plugin<Project> {
             project.dependencies.add('implementation', project.extensions.getByName(EXT_COMMERCE_PLATFORM_LIBRARIES))
         }
 
+        project.dependencies.add('testImplementation', 'org.junit.vintage:junit-vintage-engine:5.10.1')
+
         project.tasks.withType(Test).configureEach {
             doFirst {
                 systemProperty 'easyRestBaseUrl', "${project.properties['sap.commerce.easy.rest.base.url']}"
