@@ -69,7 +69,7 @@ class GenerateModelClassesTask extends AbstractEasyExtensionTask {
     private String getBasePackage() {
         String basePackage = this.getEasyProperties().getProperty("${this.getEasyExtension().id}.easy.type.base.models.package")
         if (StringUtils.isEmpty(basePackage)) {
-            basePackage = "${this.getEasyExtension().groupId}.${this.getEasyExtension().id.replaceAll('[^a-zA-Z0-9]', '')}"
+            basePackage = "${this.getEasyExtension().groupId}.${this.getEasyExtension().id.replaceAll('[^a-zA-Z0-9]', '').toLowerCase()}"
         }
         return basePackage
     }
