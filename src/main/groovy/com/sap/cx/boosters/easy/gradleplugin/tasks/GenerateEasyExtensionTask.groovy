@@ -1,10 +1,10 @@
 package com.sap.cx.boosters.easy.gradleplugin.tasks
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.sap.cx.boosters.easy.gradleplugin.data.EasyTypes
+import com.sap.cx.boosters.easy.gradleplugin.util.ScaffoldingGenerator
+
+import com.fasterxml.jackson.databind.ObjectMapper
 import groovy.io.FileType
-import org.apache.velocity.VelocityContext
-import org.apache.velocity.app.VelocityEngine
 import org.codehaus.groovy.GroovyException
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
@@ -12,11 +12,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.util.zip.ZipEntry
-import java.util.zip.ZipFile
 
 class GenerateEasyExtensionTask extends DefaultTask {
 
@@ -160,11 +155,12 @@ class GenerateEasyExtensionTask extends DefaultTask {
                 'src/e2etest/groovy/__EASY_EXTENSION_PACKAGE_FOLDER__/controller/HelloWorldControllerTest.groovy.vm',
         ];
 
-        copyTemplateFiles(templateList, extensionDirectory.getPath(), parameters)
+        ScaffoldingGenerator scaffoldingGenerator = new ScaffoldingGenerator("templates/easy-extension")
+        scaffoldingGenerator.copyTemplateFiles(templateList, extensionDirectory.getPath(), parameters)
     }
 
     private void createEasyTypeDescriptor(File extensionDirectory) {
-        logger.info("creating easy types descriptor 'easytypes.json' for extension '${this.easyExtensionId}'")
+        logger.info("creating easy types descriptor 'easytypes.json'")
         File easyTypesDescriptor = new File(extensionDirectory, "easytypes.json")
         this.createFile(easyTypesDescriptor)
 
@@ -172,7 +168,7 @@ class GenerateEasyExtensionTask extends DefaultTask {
 
         def objectMapper = new ObjectMapper()
         easyTypesDescriptor.text = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(easyTypes)
-        logger.info("created easy types descriptor 'easytypes.json' for extension '${this.easyExtensionId}'")
+        logger.info("created easy types descriptor 'easytypes.json'")
     }
 
     private void createFile(File file) {
@@ -184,95 +180,6 @@ class GenerateEasyExtensionTask extends DefaultTask {
         } else {
             throw new GroovyException("Failed to create file '$file.absolutePath'")
         }
-    }
-
-    private void copyTemplateDirectory(String templateDir, String destFolder, Map<String, String> parameters) {
-        def list = []
-
-        def dir = new File("path_to_parent_dir")
-        dir.eachFileRecurse(FileType.FILES) { file ->
-            list << file
-        }
-
-        //Afterwards the list variable contains all files (java.io.File) of
-        //the given directory and its subdirectories
-        list.each {
-            println it.path
-        }
-    }
-
-    private void copyTemplateFiles(List templateList, String destFolder, Map<String, String> parameters) {
-        templateList.each { String template ->
-            copyTemplateFile(template, destFolder, parameters)
-        }
-    }
-
-    public void copyTemplateFile(String template, String destFolder, Map<String, String> parameters) {
-        logger.info("copying resource '${template}' for extension '${this.easyExtensionId}'")
-
-        InputStream templateStream = Thread.currentThread().contextClassLoader.getResourceAsStream("templates/easy-extension/${template}")
-        if (templateStream == null) {
-            logger.error("Resource template '${template}' not found")
-            return;
-        }
-
-        if (isDirectory(template)) {
-            logger.error("Resource template '${template}' is a directory and this is not supported")
-            return;
-        }
-
-        //Let's parse template for __MY_PARAMETER__ to replace by the parameter value
-        parameters.each { key, value ->
-            template = template.replaceAll("__${key}__", value)
-        }
-
-        if (template.endsWith('.vm')) {
-            template = template.substring(0, template.lastIndexOf('.vm'))
-            Path targetFile = Paths.get(destFolder).resolve(template)
-            copyVelocityResource(templateStream, targetFile, parameters)
-        } else {
-            Path targetFile = Paths.get(destFolder).resolve(template)
-            copyResource(templateStream, targetFile)
-        }
-        templateStream.close()
-
-        logger.info("copied resource '${template}' for extension '${this.easyExtensionId}'")
-    }
-
-    private boolean isDirectory(String template) {
-        String file = Thread.currentThread().contextClassLoader.getResource("templates/easy-extension/${template}").getFile();
-        int bangIndex = file.indexOf('!');
-        String jarPath = file.substring(bangIndex + 2);
-        file = new URL(file.substring(0, bangIndex)).getFile();
-        ZipFile zip = new ZipFile(file);
-        ZipEntry entry = zip.getEntry(jarPath);
-        boolean isDirectory = entry.isDirectory();
-        return entry.isDirectory()
-    }
-
-    private void copyResource(InputStream templateStream, Path targetPath) {
-        Files.createDirectories(targetPath.getParent());
-        targetPath.toFile().append(templateStream)
-    }
-
-    private void copyVelocityResource(InputStream templateStream, Path targetPath, Map<String, String> tokenReplacements) {
-        def velocityEngine = new VelocityEngine()
-        velocityEngine.init()
-
-        def contentTemplate = new Scanner(templateStream).useDelimiter("\\A").next()
-        def velocityContext = new VelocityContext()
-
-        tokenReplacements.each {
-            velocityContext.put(it.key, it.value)
-        }
-
-        def result = new StringWriter()
-        velocityEngine.evaluate(velocityContext, result, 'replaceTokens', contentTemplate)
-
-        Files.createDirectories(targetPath.getParent());
-        def targetFile = targetPath.toFile()
-
-        targetFile.text = result.toString()
     }
 
 }
