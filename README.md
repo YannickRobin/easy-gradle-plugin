@@ -51,7 +51,7 @@ In this example, we will create an easy local repository `easy-sample-repo` that
 - Copy the following content into `build.gradle`
     ```groovy
     plugins {
-        id "io.github.yannickrobin.easy-gradle-plugin" version "0.0.3"
+        id "io.github.yannickrobin.easy-gradle-plugin" version "0.0.4"
     }
     ```
 - Create file `gradle.properties` in `easy-sample-repo` directory with following content
