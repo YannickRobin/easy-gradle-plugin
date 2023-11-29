@@ -34,7 +34,7 @@ To list available gradle tasks
 
 ```
 group 'io.github.yannickrobin'
-version '0.0.2'
+version '0.0.4'
 ```
 
 - Before publish in gradle portal, for testing purpose you can publish the plugin in your local maven repository or in internal SAP artifactory repository.
