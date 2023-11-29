@@ -175,7 +175,7 @@ In this example, we will generate an easy extension `helloworld` in local reposi
     ```
 
 ## Update Repository
-- Run the command `./gradlew easy-update-repo` to list all available extensions in the repository
+- Run the command `./gradlew easy-update-repo` to update the latest from the remote repository location
   ```
   > Task :easy-update-repo
   API executed successfully. HTTP status: 200

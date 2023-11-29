@@ -59,7 +59,8 @@ class ${itemType.modelClassName} extends $superClassName {
 
     #set($isDynamic = $attribute.persistence.type.value == "dynamic")
     #set($isLocalized = $attribute.type.startsWith("localized"))
-    #set($isWritable = $attribute.modifiers.containsKey("write") && $attribute.modifiers.get("write"))
+    #set($isInitial = $attribute.modifiers.containsKey("initial") && $attribute.modifiers.get("initial"))
+    #set($isWritable = $isInitial || $attribute.modifiers.containsKey("write") && $attribute.modifiers.get("write"))
     #set($lastDotIndex = $attribute.typeClass.lastIndexOf('.'))
     #if($attribute.typeClassArguments != $null)
     #set($arguments = "")
