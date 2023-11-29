@@ -1,6 +1,7 @@
 .DS_Store
 .gradle/
 build/
+bin/
 gradle
 gradlew*
 .idea
