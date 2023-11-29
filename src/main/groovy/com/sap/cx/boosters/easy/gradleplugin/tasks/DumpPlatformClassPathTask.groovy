@@ -9,6 +9,10 @@ import org.gradle.api.tasks.TaskAction
 
 class DumpPlatformClassPathTask extends DefaultTask {
 
+    public static final String PROP_SAP_COMMERCE_PLATFORM_START_PARAMETER = 'commercePlatformHome'
+
+    public static final String PROP_SAP_COMMERCE_PLATFORM_HOME = 'sap.commerce.platform.home'
+
     @Input
     @Optional
     String commercePlatformHome
@@ -21,11 +25,11 @@ class DumpPlatformClassPathTask extends DefaultTask {
 
     void initializeCommercePlatformHome() {
         if (null == this.commercePlatformHome || this.commercePlatformHome.isBlank()) {
-            String configuredCommercePlatformHome = project.gradle.startParameter.projectProperties.commercePlatformHome
+            def configuredCommercePlatformHome = project.gradle.startParameter.projectProperties.commercePlatformHome
             if (null != configuredCommercePlatformHome && !configuredCommercePlatformHome.isBlank()) {
                 this.commercePlatformHome = configuredCommercePlatformHome
-            } else if (project.properties.containsKey('sap.commerce.platform.home')) {
-                this.commercePlatformHome = project.properties.get('sap.commerce.platform.home')
+            } else if (project.properties.containsKey(PROP_SAP_COMMERCE_PLATFORM_HOME)) {
+                this.commercePlatformHome = project.properties.get(PROP_SAP_COMMERCE_PLATFORM_HOME)
                 if (null == this.commercePlatformHome || this.commercePlatformHome.isBlank()) {
                     throw new GradleException('Commerce platform home is not configured.')
                 }
@@ -35,12 +39,20 @@ class DumpPlatformClassPathTask extends DefaultTask {
 
     @TaskAction
     def dumpClassPath() {
-        println "commercePlatformHome: ${commercePlatformHome}"
-        def classPath = CommerceExtensionUtil.buildPlatformClassPath(this.commercePlatformHome)
-        classPath.each {k,v ->
-            println k
-            v.each {println "  ${it.canonicalPath}"}
+
+        init()
+
+        if (null == this.commercePlatformHome || this.commercePlatformHome.isBlank()) {
+            project.logger.warn "no commerce platform home is set, specify commercePlatformHome in gradle.properties file"
+        } else {
+            println "commercePlatformHome: ${commercePlatformHome}"
+            def classPath = CommerceExtensionUtil.buildPlatformClassPath(this.commercePlatformHome)
+            classPath.each {k,v ->
+                println k
+                v.each {println "  ${it.canonicalPath}"}
+            }
         }
+
     }
 
 }
