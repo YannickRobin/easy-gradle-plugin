@@ -14,7 +14,7 @@ class ReInstallExtensionTask extends AbstractEasyExtensionTask {
     def reinstall() {
         init()
         restClient.post(
-                path: "$easyApiBaseUrl/repository/$repositoryCode/extension/$extensionId/install",
+                path: "$easyApiBaseUrl/repository/$repositoryCode/extension/$extensionId/reinstall",
                 query: ['async': 'false']
         )
     }
