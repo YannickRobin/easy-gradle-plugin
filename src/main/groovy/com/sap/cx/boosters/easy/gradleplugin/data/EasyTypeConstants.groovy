@@ -42,6 +42,7 @@ class EasyTypeConstants {
             'java.util.Locale',
             'java.util.List',
             'java.util.Set',
-            'java.util.Map'
+            'java.util.Map',
+            'java.util.Date'
     ]
 }
