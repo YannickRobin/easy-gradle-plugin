@@ -19,6 +19,7 @@ Execute the following pre-requisites.
   - Windows - `<WINDOWS_DRIVE>:\Users\<USER_NAME>\.gradle\gradle.properties`
 - Configure you gradle environment for `easy-gradle-plugin` by adding the following properties to global `gradle.properties`
   ```properties
+  
   # The base url of the easy rest for your SAP Commerce Cloud. Below if for a local SAP Commerce Cloud Server
   sap.commerce.easy.rest.base.url = https://localhost:9002/easyrest
 
@@ -30,6 +31,7 @@ Execute the following pre-requisites.
   
   # Path to the hybris home directory on your computer to add SAP Commerce Cloud libraries to your extension
   sap.commerce.easy.platform.home=<SAP COMMERCE HOME>
+  
   ```
 
 ## Configure your local Easy Repository
@@ -38,7 +40,7 @@ In this example, we will create an easy local repository `easy-sample-repo` that
 - `cd easy-sample-repo`
 - Configure the easy repository in SAP Commerce Cloud backoffice as per instructions in [Configuring a Local Repository Documentation](https://sap.github.io/easy-extension-framework/configuring-an-easy-repository-in-backoffice/#configuring-a-local-repository)
 - Run the command `gradle init --type basic --dsl groovy --no-incubating --project-name easy-sample-repo`
-- Add the following content in `settings.gradle` file as the **_first line_**
+- If you are running the local setup of the plugin and not the published one. Add the following content in `settings.gradle` file as the **_first line_**
   ```  
    pluginManagement {
      repositories {
@@ -77,12 +79,84 @@ In this example, we will generate an easy extension `helloworld` in local reposi
   BUILD SUCCESSFUL in 1s
   1 actionable task: 1 executed
   ```
-
+- Change the current director to your extension `cd helloworld`
+- Run the command `gradle wrapper` to generate Gradle wrapper files
+- Execute tests `./gradlew test` to check your extension is correctly setup
 > You can  now implement the extension as per the instructions available at [Easy Extension Documentation](https://sap.github.io/easy-extension-framework/easy-extension) 
+
+## Update Repository
+- Run the command `./gradlew easy-update-repo` to list all available extensions in the repository
+  ```
+  > Task :easy-update-repo
+  API executed successfully. HTTP status: 200
+  {
+  "eventId": "00000001",
+  "message": "Update request for repository easy-sample-repo submitted"
+  }
+  
+  BUILD SUCCESSFUL in 3s
+  1 actionable task: 1 executed
+  ```
+
+## List Easy Extensions
+- Run the command `./gradlew easy-ext-list` to list all available extensions in the repository
+
+    ```
+    > Task :easy-ext-list
+  API executed successfully. HTTP status: 200
+  [
+    ...
+  ]
+    
+    BUILD SUCCESSFUL in 1s
+    1 actionable task: 1 executed
+    ```
+
+## Install Extension
+- Run the command `./gradlew easy-ext-install -PextensionId=helloworld` to install `helloworld` extension of the repository
+  ```
+  > Task :easy-ext-install
+  API executed successfully. HTTP status: 200
+  {
+  "eventId": "00000002",
+  "message": "Installation request for extension helloworld submitted."
+  }
+  
+  BUILD SUCCESSFUL in 3s
+  1 actionable task: 1 executed
+  ```
+
+## Update Extension
+- Run the command `./gradlew easy-ext-reinstall -PextensionId=helloworld` to reinstall/reload/update `helloworld` extension of the repository
+  ```
+  > Task :easy-ext-reinstall
+  API executed successfully. HTTP status: 200
+  {
+  "eventId": "00000003",
+  "message": "Re-installation/reload request for extension helloworld submitted."
+  }
+  
+  BUILD SUCCESSFUL in 2s
+  1 actionable task: 1 executed
+  ```
+
+## Uninstall Extension
+- Run the command `./gradlew easy-ext-uninstall -PextensionId=helloworld` to uninstall `helloworld` extension of the repository
+  ```
+  > Task :easy-ext-uninstall
+  API executed successfully. HTTP status: 200
+  {
+  "eventId": "00000004",
+  "message": "Uninstallation request for extension helloworld submitted."
+  }
+  
+  BUILD SUCCESSFUL in 1s
+  1 actionable task: 1 executed
+  ```
 
 ## Generate Model and Enum classes for Easy Types
 ### Prerequisites
-  - Define the Easy type definitions in `easytype.json` file, for example:
+  - Define the Easy type definitions in `easytypes.json` file, for example:
     ```json
       {
         "itemtypes" : [
@@ -173,76 +247,6 @@ In this example, we will generate an easy extension `helloworld` in local reposi
        }
 
     ```
-
-## Update Repository
-- Run the command `./gradlew easy-update-repo` to update the latest from the remote repository location
-  ```
-  > Task :easy-update-repo
-  API executed successfully. HTTP status: 200
-  {
-  "eventId": "00000001",
-  "message": "Update request for repository easy-sample-repo submitted"
-  }
-  
-  BUILD SUCCESSFUL in 3s
-  1 actionable task: 1 executed
-  ```
-
-## List Easy Extensions
-- Run the command `./gradlew easy-ext-list` to list all available extensions in the repository
-
-    ```
-    > Task :easy-ext-list
-  API executed successfully. HTTP status: 200
-  [
-    ...
-  ]
-    
-    BUILD SUCCESSFUL in 1s
-    1 actionable task: 1 executed
-    ```
-
-## Install Extension
-- Run the command `./gradlew easy-ext-install -PextensionId=helloworld` to install `helloworld` extension of the repository
-  ```
-  > Task :easy-ext-install
-  API executed successfully. HTTP status: 200
-  {
-  "eventId": "00000002",
-  "message": "Installation request for extension helloworld submitted."
-  }
-  
-  BUILD SUCCESSFUL in 3s
-  1 actionable task: 1 executed
-  ```
-
-## Update Extension
-- Run the command `./gradlew easy-ext-reinstall -PextensionId=helloworld` to reinstall/reload/update `helloworld` extension of the repository
-  ```
-  > Task :easy-ext-reinstall
-  API executed successfully. HTTP status: 200
-  {
-  "eventId": "00000003",
-  "message": "Re-installation/reload request for extension helloworld submitted."
-  }
-  
-  BUILD SUCCESSFUL in 2s
-  1 actionable task: 1 executed
-  ```
-
-## Uninstall Extension
-- Run the command `./gradlew easy-ext-uninstall -PextensionId=helloworld` to uninstall `helloworld` extension of the repository
-  ```
-  > Task :easy-ext-uninstall
-  API executed successfully. HTTP status: 200
-  {
-  "eventId": "00000004",
-  "message": "Uninstallation request for extension helloworld submitted."
-  }
-  
-  BUILD SUCCESSFUL in 1s
-  1 actionable task: 1 executed
-  ```
 
 ## All Tasks
 - Run the command `./gradlew tasks --group easy` to see all the task available with this plugin
