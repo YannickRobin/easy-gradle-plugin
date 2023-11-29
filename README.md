@@ -29,7 +29,7 @@ Execute the following pre-requisites.
   sap.commerce.easy.api.key = 123456
   
   # Path to the hybris home directory on your computer to add SAP Commerce Cloud libraries to your extension
-  commercePlatformHome=<SAP COMMERCE HOME>
+  sap.commerce.easy.platform.home=<SAP COMMERCE HOME>
   ```
 
 ## Configure your local Easy Repository

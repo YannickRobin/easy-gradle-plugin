@@ -13,7 +13,7 @@ class EasyPlugin implements Plugin<Project> {
 
     public static final String EXT_COMMERCE_PLATFORM_LIBRARIES = 'commercePlatformLibraries'
 
-    public static final String PROP_COMMERCE_PLATFORM_HOME = 'commercePlatformHome'
+    public static final String PROP_COMMERCE_PLATFORM_HOME = 'sap.commerce.easy.platform.home'
 
     void apply(Project project) {
         project.plugins.apply(GroovyPlugin)
@@ -36,7 +36,7 @@ class EasyPlugin implements Plugin<Project> {
 
         // add commerce libraries
         if (!project.hasProperty(PROP_COMMERCE_PLATFORM_HOME)) {
-            project.logger.warn "no commerce platform home is set, specify commercePlatformHome in gradle.properties file"
+            project.logger.warn "no commerce platform home is set, specify ${PROP_COMMERCE_PLATFORM_HOME} in gradle.properties file"
         } else {
 
             project.extensions.add(
