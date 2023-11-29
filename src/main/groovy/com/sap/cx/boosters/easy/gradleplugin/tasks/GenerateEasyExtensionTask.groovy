@@ -1,8 +1,8 @@
 package com.sap.cx.boosters.easy.gradleplugin.tasks
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.sap.cx.boosters.easy.gradleplugin.data.EasyExtension
 import com.sap.cx.boosters.easy.gradleplugin.data.EasyTypes
+import groovy.io.FileType
 import org.apache.velocity.VelocityContext
 import org.apache.velocity.app.VelocityEngine
 import org.codehaus.groovy.GroovyException
@@ -15,11 +15,8 @@ import org.gradle.api.tasks.TaskAction
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-
-import groovy.io.FileType
-
-import java.util.zip.ZipFile
 import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
 
 class GenerateEasyExtensionTask extends DefaultTask {
 
@@ -42,38 +39,52 @@ class GenerateEasyExtensionTask extends DefaultTask {
 
     @TaskAction
     void generateEasyExtension() {
-        println("Generating new easy extension in current directory")
-        this.initializeBasePackage()        
-        this.initializeExtensionId()
-        this.initializeEasyVersion()
-        def easyExtensionPackageName = this.basePackage + '.' + this.easyExtensionId
-        def easyExtensionPackageFolder = easyExtensionPackageName.replaceAll('\\.', '/')
+        if (project == project.gradle.rootProject) {
+            println("Generating new easy extension in current directory")
+            this.initializeBasePackage()
+            this.initializeExtensionId()
+            this.initializeEasyVersion()
+            def easyExtensionPackageName = this.basePackage + '.' + this.easyExtensionId.replaceAll('[^a-zA-Z0-9]', '')
+            def easyExtensionPackageFolder = easyExtensionPackageName.replaceAll('\\.', '/')
 
-        logger.info("Configuration for extension generation are:")
-        logger.info("Repository Directory: '${project.projectDir}'")
-        logger.info("Base Package: '${this.basePackage}'")        
-        logger.info("Extension Id: '${this.easyExtensionId}'")
-        logger.info("Easy Version: '${this.easyVersion}'")
-        logger.info("Extension Package Name: '${easyExtensionPackageName}'")
-        logger.info("Extension Package Folder: '${easyExtensionPackageFolder}'")
+            logger.info("Configuration for extension generation are:")
+            logger.info("Repository Directory: '${project.projectDir}'")
+            logger.info("Base Package: '${this.basePackage}'")
+            logger.info("Extension Id: '${this.easyExtensionId}'")
+            logger.info("Easy Version: '${this.easyVersion}'")
+            logger.info("Extension Package Name: '${easyExtensionPackageName}'")
+            logger.info("Extension Package Folder: '${easyExtensionPackageFolder}'")
 
-        def parameters = [
-                'EASY_GRADLE_PLUGIN_GROUP_ID': project.group.toString(),
-                'EASY_GRADLE_PLUGIN_NAME'    : project.name,
-                'EASY_GRADLE_PLUGIN_VERSION' : project.version.toString(),
-                'EASY_API_BASE_URL'          : '',
-                'EASY_API_KEY'               : '',
-                'EASY_EXTENSION_ID'          : this.easyExtensionId,
-                'EASY_EXTENSION_DESCRIPTION' : '',
-                'EASY_EXTENSION_AUTHORS'      : '',
-                'EASY_VERSION'               : this.easyVersion,
-                'EASY_EXTENSION_BASE_PACKAGE': this.basePackage,
-                'EASY_EXTENSION_PACKAGE_NAME': easyExtensionPackageName,
-                'EASY_EXTENSION_PACKAGE_FOLDER': easyExtensionPackageFolder,
-                'EASY_REPOSITORY_CODE'       : ''
-        ]
+            def parameters = [
+                    'EASY_GRADLE_PLUGIN_GROUP_ID'  : project.group.toString(),
+                    'EASY_GRADLE_PLUGIN_NAME'      : project.name,
+                    'EASY_GRADLE_PLUGIN_VERSION'   : project.version.toString(),
+                    'EASY_API_BASE_URL'            : '',
+                    'EASY_API_KEY'                 : '',
+                    'EASY_EXTENSION_ID'            : this.easyExtensionId,
+                    'EASY_EXTENSION_DESCRIPTION'   : '',
+                    'EASY_EXTENSION_AUTHORS'       : '',
+                    'EASY_VERSION'                 : this.easyVersion,
+                    'EASY_EXTENSION_BASE_PACKAGE'  : this.basePackage,
+                    'EASY_EXTENSION_PACKAGE_NAME'  : easyExtensionPackageName,
+                    'EASY_EXTENSION_PACKAGE_FOLDER': easyExtensionPackageFolder,
+                    'EASY_REPOSITORY_CODE'         : ''
+            ]
 
-        this.generateInternal(parameters)
+            this.generateInternal(parameters)
+            this.addProjectAsSubProjectToRoot()
+        } else {
+            println('extension generation is applicable for root project (repository) only and not applicable to the easy extension project. Skipping it ...')
+        }
+    }
+
+    void addProjectAsSubProjectToRoot(){
+        def settingsFile = project.rootProject.file('settings.gradle')
+        def settingsContent = settingsFile.text
+
+        settingsContent += "\ninclude '${this.easyExtensionId}' \n"
+
+        settingsFile.text = settingsContent
     }
 
     void initializeExtensionId() {
@@ -112,7 +123,7 @@ class GenerateEasyExtensionTask extends DefaultTask {
             }
         }
     }
-    
+
     private void generateInternal(Map<String, String> parameters) {
         def extensionDirectory = new File(project.projectDir, this.easyExtensionId)
         if (extensionDirectory.exists()) {
@@ -125,29 +136,29 @@ class GenerateEasyExtensionTask extends DefaultTask {
         }
 
         extensionDirectory = new File(project.projectDir, this.easyExtensionId)
-        java.net.URL resourceTemplateFolder = Thread.currentThread().contextClassLoader.getResource("templates/easy-extension")
+        URL resourceTemplateFolder = Thread.currentThread().contextClassLoader.getResource("templates/easy-extension")
         if (resourceTemplateFolder == null) {
             throw new IllegalArgumentException("Template folder not found");
         }
 
         def templateList = [
-            'README.md.vm',
-            '.gitignore',
-            'build.gradle.vm',
-            'settings.gradle.vm',
-            'gradle.properties.vm',
-            'easy.json.vm',
-            'easy.properties.vm',
-            'impex/install/01-easyrest.impex.vm',
-            'impex/uninstall/01-easyrest.impex.vm',
-            'src/main/groovy/EasyBeans.groovy.vm',
-            'src/main/groovy/easy.gdsl',
-            'src/main/groovy/Init.groovy',            
-            'src/main/groovy/__EASY_EXTENSION_PACKAGE_FOLDER__/service/HelloWorldService.groovy.vm',
-            'src/main/groovy/__EASY_EXTENSION_PACKAGE_FOLDER__/controller/HelloWorldController.groovy.vm',
-            'src/test/groovy/__EASY_EXTENSION_PACKAGE_FOLDER__/service/HelloWorldServiceTest.groovy.vm',
-            'src/e2etest/groovy/__EASY_EXTENSION_PACKAGE_FOLDER__/controller/HelloWorldControllerTest.groovy.vm',
-          ];
+                'README.md.vm',
+                '.gitignore',
+                'build.gradle.vm',
+                'settings.gradle.vm',
+                'gradle.properties.vm',
+                'easy.json.vm',
+                'src/main/resources/easy.properties.vm',
+                'src/main/resources/impex/install/01-easyrest.impex.vm',
+                'src/main/resources/impex/uninstall/01-easyrest.impex.vm',
+                'src/main/groovy/EasyBeans.groovy.vm',
+                'src/main/groovy/easy.gdsl',
+                'src/main/groovy/Init.groovy',
+                'src/main/groovy/__EASY_EXTENSION_PACKAGE_FOLDER__/service/HelloWorldService.groovy.vm',
+                'src/main/groovy/__EASY_EXTENSION_PACKAGE_FOLDER__/controller/HelloWorldController.groovy.vm',
+                'src/test/groovy/__EASY_EXTENSION_PACKAGE_FOLDER__/service/HelloWorldServiceTest.groovy.vm',
+                'src/e2etest/groovy/__EASY_EXTENSION_PACKAGE_FOLDER__/controller/HelloWorldControllerTest.groovy.vm',
+        ];
 
         copyTemplateFiles(templateList, extensionDirectory.getPath(), parameters)
     }
@@ -179,11 +190,11 @@ class GenerateEasyExtensionTask extends DefaultTask {
         def list = []
 
         def dir = new File("path_to_parent_dir")
-        dir.eachFileRecurse (FileType.FILES) { file ->
-        list << file
+        dir.eachFileRecurse(FileType.FILES) { file ->
+            list << file
         }
 
-        //Afterwards the list variable contains all files (java.io.File) of 
+        //Afterwards the list variable contains all files (java.io.File) of
         //the given directory and its subdirectories
         list.each {
             println it.path
@@ -191,23 +202,23 @@ class GenerateEasyExtensionTask extends DefaultTask {
     }
 
     private void copyTemplateFiles(List templateList, String destFolder, Map<String, String> parameters) {
-        templateList.each{ String template -> 
+        templateList.each { String template ->
             copyTemplateFile(template, destFolder, parameters)
         }
     }
 
-    public void copyTemplateFile(String template, String destFolder, Map<String, String> parameters) {        
+    public void copyTemplateFile(String template, String destFolder, Map<String, String> parameters) {
         logger.info("copying resource '${template}' for extension '${this.easyExtensionId}'")
-        
+
         InputStream templateStream = Thread.currentThread().contextClassLoader.getResourceAsStream("templates/easy-extension/${template}")
         if (templateStream == null) {
             logger.error("Resource template '${template}' not found")
             return;
         }
 
-        if(isDirectory(template)) { 
-           logger.error("Resource template '${template}' is a directory and this is not supported")
-           return;
+        if (isDirectory(template)) {
+            logger.error("Resource template '${template}' is a directory and this is not supported")
+            return;
         }
 
         //Let's parse template for __MY_PARAMETER__ to replace by the parameter value
@@ -215,13 +226,11 @@ class GenerateEasyExtensionTask extends DefaultTask {
             template = template.replaceAll("__${key}__", value)
         }
 
-        if (template.endsWith('.vm'))
-        {
+        if (template.endsWith('.vm')) {
             template = template.substring(0, template.lastIndexOf('.vm'))
             Path targetFile = Paths.get(destFolder).resolve(template)
             copyVelocityResource(templateStream, targetFile, parameters)
-        }
-        else {
+        } else {
             Path targetFile = Paths.get(destFolder).resolve(template)
             copyResource(templateStream, targetFile)
         }
@@ -230,14 +239,13 @@ class GenerateEasyExtensionTask extends DefaultTask {
         logger.info("copied resource '${template}' for extension '${this.easyExtensionId}'")
     }
 
-    private boolean isDirectory(String template)
-    {
+    private boolean isDirectory(String template) {
         String file = Thread.currentThread().contextClassLoader.getResource("templates/easy-extension/${template}").getFile();
-		int bangIndex = file.indexOf('!');
-		String jarPath = file.substring(bangIndex + 2);
-		file = new URL(file.substring(0, bangIndex)).getFile();
-		ZipFile zip = new ZipFile(file);
-		ZipEntry entry = zip.getEntry(jarPath);
+        int bangIndex = file.indexOf('!');
+        String jarPath = file.substring(bangIndex + 2);
+        file = new URL(file.substring(0, bangIndex)).getFile();
+        ZipFile zip = new ZipFile(file);
+        ZipEntry entry = zip.getEntry(jarPath);
         boolean isDirectory = entry.isDirectory();
         return entry.isDirectory()
     }
@@ -245,7 +253,7 @@ class GenerateEasyExtensionTask extends DefaultTask {
     private void copyResource(InputStream templateStream, Path targetPath) {
         Files.createDirectories(targetPath.getParent());
         targetPath.toFile().append(templateStream)
-    }   
+    }
 
     private void copyVelocityResource(InputStream templateStream, Path targetPath, Map<String, String> tokenReplacements) {
         def velocityEngine = new VelocityEngine()
