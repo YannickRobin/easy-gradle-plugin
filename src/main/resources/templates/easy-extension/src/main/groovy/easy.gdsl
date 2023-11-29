@@ -1,0 +1,30 @@
+// Makes binding variables + static import in EasyBeans.groovy
+
+def easyBeans = context(scope: scriptScope(name: 'EasyBeans.groovy'))
+
+contributor(easyBeans) {
+
+    method name: 'easyCoreBeans', type: 'void', params: [beans: 'groovy.lang.Closure']
+    method name: 'easyWebBeans', type: 'void', params: [context: 'java.lang.String', beans: 'groovy.lang.Closure']
+
+    property name: 'spring', type: 'de.hybris.platform.spring.ctx.TenantIgnoreXmlWebApplicationContext'
+    property name: 'springWeb', type: 'java.util.Map<String,de.hybris.platform.spring.ctx.TenantIgnoreXmlWebApplicationContext>'
+    property name: 'logger', type: 'org.slf4j.Logger'
+    property name: 'extension', type: 'com.sap.cx.boosters.easy.core.data.EasyExtension'
+
+}
+
+// REVIEWME: add some autocompletion inside easyCoreBeans/easyWebBeans
+
+// get the context for all closures
+def ctx = context(scope: closureScope())
+
+contributor(ctx) {
+    // method name: 'easyCoreBeans', type: 'void', params: [beans: '@groovy.lang.DelegatesTo(value = org.springframework.beans.factory.support.DefaultListableBeanFactory.class) groovy.lang.Closure']
+    def call1 = enclosingCall('easyCoreBeans')
+    def call3 = enclosingCall('easyWebBeans')
+
+    if (call1 || call2 || call3) {
+        delegatesTo(findClass('org.springframework.beans.factory.support.DefaultListableBeanFactory'))
+    }
+}
