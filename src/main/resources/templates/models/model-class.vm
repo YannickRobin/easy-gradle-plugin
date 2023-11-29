@@ -56,8 +56,11 @@ class ${itemType.modelClassName} extends $superClassName {
     }
 
 #foreach($attribute in ${itemType.attributes})
-    #set($lastDotIndex = $attribute.typeClass.lastIndexOf('.'))
 
+    #set($isDynamic = $attribute.persistence.type.value == "dynamic")
+    #set($isLocalized = $attribute.type.startsWith("localized"))
+    #set($isWritable = $attribute.modifiers.containsKey("write") && $attribute.modifiers.get("write"))
+    #set($lastDotIndex = $attribute.typeClass.lastIndexOf('.'))
     #if($attribute.typeClassArguments != $null)
     #set($arguments = "")
     #foreach($argument in $attribute.typeClassArguments)
@@ -75,7 +78,7 @@ class ${itemType.modelClassName} extends $superClassName {
     #set($attributeQualifier = $attribute.qualifier)
     #set($firstChar = $attributeQualifier.substring(0, 1).toUpperCase())
     #set($capitalizedQualifier = $firstChar + $attributeQualifier.substring(1))
-    #if($attribute.type.startsWith("localized"))
+    #if($isLocalized)
     /**
     * <i>Generated method</i> - Getter of the <code>${itemType.code}.$attributeQualifier</code> attribute.
     * @return the $attributeQualifier
@@ -102,11 +105,16 @@ class ${itemType.modelClassName} extends $superClassName {
     */
     @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
     $attributeClass get$capitalizedQualifier() {
+        #if($isDynamic)
+        return getPersistenceContext().getDynamicValue(this, $attributeQualifier.toUpperCase())
+        #else
         return getPersistenceContext().getPropertyValue($attributeQualifier.toUpperCase())
+        #end
     }
     #end
 
-    #if($attribute.type.startsWith("localized"))
+    #if($isWritable)
+    #if($isLocalized)
     /**
     * <i>Generated method</i> - Setter of <code>${itemType.code}.$attributeQualifier</code> attribute.
     *
@@ -136,9 +144,13 @@ class ${itemType.modelClassName} extends $superClassName {
     */
     @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.SETTER)
     void set$capitalizedQualifier(final $attributeClass value) {
+        #if($isDynamic)
+        getPersistenceContext().setDynamicValue(this, $attributeQualifier.toUpperCase(), value)
+        #else
         getPersistenceContext().setPropertyValue($attributeQualifier.toUpperCase(), value)
+        #end
     }
     #end
-
+    #end
 #end
 }
