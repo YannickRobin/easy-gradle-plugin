@@ -39,7 +39,7 @@ class GenerateEasyExtensionTask extends DefaultTask {
             this.initializeBasePackage()
             this.initializeExtensionId()
             this.initializeEasyVersion()
-            def easyExtensionPackageName = this.basePackage + '.' + this.easyExtensionId.replaceAll('[^a-zA-Z0-9]', '')
+            def easyExtensionPackageName = this.basePackage + '.' + this.easyExtensionId.replaceAll('[^a-zA-Z0-9]', '').toLowerCase()
             def easyExtensionPackageFolder = easyExtensionPackageName.replaceAll('\\.', '/')
 
             logger.info("Configuration for extension generation are:")
