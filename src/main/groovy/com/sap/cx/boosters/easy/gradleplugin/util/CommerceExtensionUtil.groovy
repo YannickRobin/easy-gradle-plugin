@@ -36,24 +36,11 @@ class CommerceExtensionUtil {
             return classPath
         }
 
-         classPath[PLATFORM]= [] as Set<File>
+        classPath[PLATFORM]= [] as Set<File>
 
-        /*
-        new File(commercePlatformDirectory,'ext').traverse(type: FileType.FILES, nameFilter: ~/^.*\/ext\/.*\/lib\/.*.jar$/) {
+        // bootstrap libraries
+        new File(commercePlatformDirectory,'bootstrap/bin').traverse(type: FileType.FILES, nameFilter: ~/.*\.jar$/) {
             classPath[PLATFORM] << it
-        }
-
-        new File(commercePlatformDirectory,'bootstrap/bin').traverse(type: FileType.FILES, nameFilter: ~/^.*\/bootstrap\/bin\/.*.jar$/) {
-            classPath[PLATFORM] << it
-        }
-        */
-
-        commercePlatformDirectory.traverse(type: FileType.FILES, nameFilter: ~/.*\.jar$/) {
-            classPath[PLATFORM] << it
-        }
-
-        commercePlatformDirectory.traverse(type: FileType.DIRECTORIES, nameFilter: 'classes') {
-            if (!it.absolutePath.contains('eclipsebin')) classPath[PLATFORM] << it
         }
 
         def extensions = getExtensions(localExtensionsFile)
@@ -139,11 +126,11 @@ class CommerceExtensionUtil {
         def allExtensions = [] as Set<CommerceExtensionInfo>
         def paths = hybrisConfig.extensions[0].path.collect { it.'@dir'.text() } as List<String>
 
-        paths.each { path ->
+        paths.toSet().each { path ->
             if (path == '\${HYBRIS_BIN_DIR}') {
                 path = bindMap.HYBRIS_BIN_DIR
             }
-            println("searching extensions in path: $path")
+            println "searching extensions in path: $path"
             allExtensions.addAll(scanPath(path))
         }
 

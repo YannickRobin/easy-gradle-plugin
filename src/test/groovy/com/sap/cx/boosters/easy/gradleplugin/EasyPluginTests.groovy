@@ -22,19 +22,36 @@ class EasyPluginTests extends Specification {
 
         when:
         def commerceHomeDirectory = '/Users/I309827/SAPDevelop/hybris/hybris-2211-easy/hybris'
-        def commercePlatformDirectory = new File(commerceHomeDirectory, 'bin/platform/ext/core')
+        def coreExtDirectory = new File(commerceHomeDirectory, 'bin/platform/ext/core')
 
         // def filesFilter = /^.*ext\/.*\/lib\/.*\.jar$/
         // commercePlatformDirectory.traverse(type: FileType.FILES) {
         //     println "${it} [${it.absolutePath ==~ filesFilter}]"
         // }
 
-        def classPath = CommerceExtensionUtil.buildPlatformClassPath(commerceHomeDirectory)
-        classPath.each {k,v ->
-            println k
-            v.each {
-                println "  $it"
+        if (coreExtDirectory.exists()) {
+
+            /*
+            def classPath = CommerceExtensionUtil.buildPlatformClassPath(commerceHomeDirectory)
+            classPath.each { k, v ->
+                println k
+                v.each {
+                    println "  $it"
+                }
             }
+            */
+
+            println 'test1'
+            coreExtDirectory.traverse(type: FileType.FILES, nameFilter: ~/.*\.jar$/) {
+                println it
+            }
+
+            println 'test2'
+            def fileFilter = {File f -> f.canonicalPath ==~ /.*\/lib\/.*\.jar$/}
+            coreExtDirectory.traverse(type: FileType.FILES, filter: fileFilter) {
+                println it
+            }
+
         }
 
         then:
