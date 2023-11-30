@@ -1,1 +1,1 @@
-logger.info 'Init completed...'
+println 'Init completed...'
