@@ -71,11 +71,13 @@ class EasyPlugin implements Plugin<Project> {
         project.tasks.register('easy-update-repo', UpdateRepositoryTask) {
             group = 'easy'
             description = 'Updates the repository from remote location'
+            onlyIf { project == project.gradle.rootProject }
         }
 
         project.tasks.register('easy-ext-list', ListExtensionsTask) {
             group = 'easy'
             description = 'Lists the easy extensions of a repository'
+            onlyIf { project == project.gradle.rootProject }
         }
 
         project.tasks.register('easy-ext-install', InstallExtensionTask) {
@@ -96,6 +98,8 @@ class EasyPlugin implements Plugin<Project> {
         project.tasks.register('easy-dump-classpath', DumpPlatformClassPathTask) {
             group = 'easy'
             description = 'Dumps the classpath'
+            onlyIf { project != project.gradle.rootProject || project.hasProperty('extensionId') }
+
         }
 
     }

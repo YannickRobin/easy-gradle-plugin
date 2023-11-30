@@ -1,5 +1,6 @@
 package com.sap.cx.boosters.easy.gradleplugin.tasks
 
+import org.codehaus.groovy.GroovyException
 import org.gradle.api.tasks.TaskAction
 
 class UninstallExtensionTask extends AbstractEasyExtensionTask {
@@ -12,11 +13,15 @@ class UninstallExtensionTask extends AbstractEasyExtensionTask {
 
     @TaskAction
     def uninstall() {
-        init()
-        restClient.post(
-                path: "$easyApiBaseUrl/repository/$repositoryCode/extension/$extensionId/uninstall",
-                query: ['async': 'false']
-        )
+        if (project == project.gradle.rootProject) {
+            throw new GroovyException('Extension uninstallation cannot execute from the root project')
+        } else {
+            init()
+            restClient.post(
+                    path: "$easyApiBaseUrl/repository/$repositoryCode/extension/$extensionId/uninstall",
+                    query: ['async': 'false']
+            )
+        }
     }
 
 }

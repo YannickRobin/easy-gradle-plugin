@@ -30,20 +30,25 @@ class GenerateModelClassesTask extends AbstractEasyExtensionTask {
 
     @TaskAction
     void generate() {
-        super.initializeExtensionId()
-        this.validatePrerequisites()
-        this.initializeProperties()
-        logger.info("Generating models classes for extension: $extensionId")
-        File basePackageDirectory = this.createBasePackageDirectory()
-        if (null != easyTypes.enumtypes) {
-            this.generateEnumerationClasses(basePackageDirectory)
-        }
+        if (project == project.gradle.rootProject) {
+            throw new GroovyException('Model classes cannot generate from the root project')
+        } else {
+            super.initializeExtensionId()
+            this.validatePrerequisites()
+            this.initializeProperties()
+            logger.info("Generating models classes for extension: $extensionId")
+            File basePackageDirectory = this.createBasePackageDirectory()
+            if (null != easyTypes.enumtypes) {
+                this.generateEnumerationClasses(basePackageDirectory)
+            }
 
-        if (null != easyTypes.itemtypes) {
-            this.generateModelClasses(basePackageDirectory)
+            if (null != easyTypes.itemtypes) {
+                this.generateModelClasses(basePackageDirectory)
+            }
+            logger.info("Generated models classes for extension: $extensionId")
         }
-        logger.info("Generated models classes for extension: $extensionId")
     }
+
 
     private void validatePrerequisites() {
         if (!project.projectDir.listFiles().any { it.name == 'easy.json' }) {
