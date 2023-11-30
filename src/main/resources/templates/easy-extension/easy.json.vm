@@ -10,10 +10,11 @@
     },
     "description": "${EASY_EXTENSION_DESCRIPTION}",
     "documentation": "",
+    "thumbnail": "",
     "authors": [
       "${EASY_EXTENSION_AUTHORS}"
     ],
-    "vendor": "SAP",
+    "vendor": "",
     "tags": [
     ]
 }

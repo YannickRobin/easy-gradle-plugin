@@ -1,1 +1,8 @@
-# ${EASY_EXTENSION_ID}
+# ${EASY_EXTENSION_ID} extension
+
+
+## Overview
+${EASY_EXTENSION_DESCRIPTION}
+
+## Getting started
+This extension requires [Easy Extension Framework](https://sap.github.io/easy-extension-framework) installed on top of SAP Commerce Cloud.
