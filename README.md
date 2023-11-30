@@ -32,11 +32,11 @@ Execute the following pre-requisites.
   ```
 
 ## Configure your local Easy Repository
-In this example, we will create an Easy local repository `easy-sample-repo` that represents your development folder for Easy extensions:
-- `mkdir easy-sample-repo`
-- `cd easy-sample-repo`
+In this example, we will create an Easy local repository `easy-repo-local` that represents your development folder for Easy extensions:
+- `mkdir easy-repo-local`
+- `cd easy-repo-local`
 - In SAP Commerce Cloud backoffice, configure the Easy repository that points to your local folder as per instructions in [Configuring a Local Repository Documentation](https://sap.github.io/easy-extension-framework/configuring-an-easy-repository-in-backoffice/#configuring-a-local-repository)
-- Run the command `gradle init --type basic --dsl groovy --no-incubating --project-name easy-sample-repo`
+- Run the command `gradle init --type basic --dsl groovy --no-incubating --project-name easy-repo-local`
 - If you are running the local setup of the plugin and not the published one. Add the following content in `settings.gradle` file as the **_first line_**
   ```  
    pluginManagement {
@@ -54,16 +54,16 @@ In this example, we will create an Easy local repository `easy-sample-repo` that
     }
     ```
     ```
-- Create file `gradle.properties` in `easy-sample-repo` directory with following content
+- Create file `gradle.properties` in `easy-repo-local` directory with following content
     ```properties  
     # Base package for your easy extension
     sap.commerce.easy.extension.base.package=com.mycompany.commerce.easy.extension
     
     # The value of code attribute of the easy repository configured in your SAP Commerce Cloud instance
-    sap.commerce.easy.repository.code=easy-sample-repo
+    sap.commerce.easy.repository.code=easy-repo-local
     ```
 ## Generate an Easy Extension
-In this example, we will generate an easy extension `helloworld` in local repository `easy-sample-repo`:
+In this example, we will generate an easy extension `helloworld` in local repository `easy-repo-local`:
 - Run the command `./gradlew easy-ext-gen`
 
 ```
@@ -86,7 +86,7 @@ What is the extension id?  (default: helloworld):
   API executed successfully. HTTP status: 200
   {
   "eventId": "00000001",
-  "message": "Update request for repository easy-sample-repo submitted"
+  "message": "Update request for repository easy-repo-local submitted"
   }
   
   BUILD SUCCESSFUL in 3s
