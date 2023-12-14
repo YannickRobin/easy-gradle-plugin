@@ -12,7 +12,14 @@ The objective of this plugin is to:
 Below are the instructions for a quick setup of your development environment.
 
 ## Preparation
-Execute the following pre-requisites.
+Execute the following pre-requisites:
+- Easy Gradle plugin requires Java JDK version 17.0 or higher. To check, run `java -version`
+  ```
+  % java -version
+  openjdk version "17.0.9" 2023-10-17
+  OpenJDK Runtime Environment Homebrew (build 17.0.9+0)
+  OpenJDK 64-Bit Server VM Homebrew (build 17.0.9+0, mixed mode, sharing)
+  ```
 - Install SAP Commerce Cloud 22.11
 - Setup [Easy Extension Framework 0.3](https://sap.github.io/easy-extension-framework/getting-started/) 
 - Install [Gradle](https://gradle.org/install/)
