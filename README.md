@@ -29,11 +29,11 @@ Execute the following pre-requisites:
 - Configure you gradle environment for `easy-gradle-plugin` by adding the following properties to global `gradle.properties`
   ```properties
   # The base url of the easy rest for your SAP Commerce Cloud. Below if for a local SAP Commerce Cloud Server
-  sap.commerce.easy.rest.base.url = https://localhost:9002/easyrest
+  sap.commerce.easy.rest.base.url=https://localhost:9002/easyrest
   # The base url of the easy api for your SAP Commerce Cloud. Below if for a local SAP Commerce Cloud Server
-  sap.commerce.easy.api.base.url = https://localhost:9002/easyrest/easyapi
+  sap.commerce.easy.api.base.url=https://localhost:9002/easyrest/easyapi
   # Value of easy.apiKey property configured in SAP Commerce Cloud (by default, this is 123456)
-  sap.commerce.easy.api.key = 123456
+  sap.commerce.easy.api.key=123456
   # Path to the hybris home directory on your computer to add SAP Commerce Cloud libraries to your extension
   sap.commerce.easy.platform.home=<SAP COMMERCE HOME>  
   ```
@@ -59,7 +59,6 @@ In this example, we will create an Easy local repository `easy-repo-local` that 
     plugins {
         id "io.github.yannickrobin.easy-gradle-plugin" version "0.0.4"
     }
-    ```
     ```
 - Create file `gradle.properties` in `easy-repo-local` directory with following content
     ```properties  
