@@ -12,9 +12,11 @@ class CommerceExtensionUtil {
 
     static Logger log = LoggerFactory.getLogger(CommerceExtensionUtil)
 
-    static Set<File> buildPlatformClassPath(String commercePlatformHome) {
+    public static final String PLATFORM = 'platform'
 
-        def classPath = [] as Set<File>
+    static Map<String,Set<File>> buildPlatformClassPath(String commercePlatformHome) {
+
+        def classPath = [:] as Map<String,Set<File>>
 
         if (!commercePlatformHome) {
             return classPath
@@ -34,11 +36,11 @@ class CommerceExtensionUtil {
             return classPath
         }
 
-        commercePlatformDirectory.traverse(type: FileType.FILES, nameFilter: ~/.*\.jar$/) {
-            classPath << it
-        }
-        commercePlatformDirectory.traverse(type: FileType.DIRECTORIES, nameFilter: 'classes') {
-            if (!it.absolutePath.contains('eclipsebin')) classPath << it
+        classPath[PLATFORM]= [] as Set<File>
+
+        // bootstrap libraries
+        new File(commercePlatformDirectory,'bootstrap/bin').traverse(type: FileType.FILES, nameFilter: ~/.*\.jar$/) {
+            classPath[PLATFORM] << it
         }
 
         def extensions = getExtensions(localExtensionsFile)
@@ -47,22 +49,34 @@ class CommerceExtensionUtil {
 
         extensions.each { info ->
 
+            def addJars = {String ext, String path ->
+                def cpElement = new File(info.rootPath, path)
+                if (cpElement.exists()) classPath[ext].addAll(cpElement.listFiles(jarFilter))
+            }
+
+            def addFolder = {String ext, String path ->
+                def cpElement = new File(info.rootPath, path)
+                if (cpElement.exists()) classPath[ext].add(cpElement)
+            }
+
             log.debug "adding classpath for extension: ${info.name}"
-            def extBinDir = new File(info.rootPath, 'bin')
-            if (extBinDir.exists()) classPath.addAll(extBinDir.listFiles(jarFilter))
+            addJars(PLATFORM, 'bin')
+            addJars(PLATFORM, 'lib')
+            addFolder(PLATFORM, 'classes')
+            addFolder(PLATFORM, 'resources')
 
-            def extLibDir = new File(info.rootPath, 'lib')
-            if (extLibDir.exists()) classPath.addAll(extLibDir.listFiles(jarFilter))
-
-            def extClassesDir = new File(info.rootPath, 'classes')
-            if (extClassesDir.exists()) classPath.add(extClassesDir)
-
-            def resourcesDir = new File(info.rootPath, 'resources')
-            if (resourcesDir.exists()) classPath.add(resourcesDir)
+            if (info.webmodule) {
+                classPath[info.name] = [] as Set<File>
+                addJars(info.name, 'web/webroot/WEB-INF/lib')
+                addFolder(info.name, 'web/webroot/WEB-INF/classes')
+            }
 
         }
 
-        classPath.each { it -> log.debug it.canonicalPath }
+        classPath.each { k,v ->
+            log.debug k
+            v.each { log.debug "  ${it.canonicalPath}"}
+        }
 
         classPath
 
@@ -112,11 +126,11 @@ class CommerceExtensionUtil {
         def allExtensions = [] as Set<CommerceExtensionInfo>
         def paths = hybrisConfig.extensions[0].path.collect { it.'@dir'.text() } as List<String>
 
-        paths.each { path ->
+        paths.toSet().each { path ->
             if (path == '\${HYBRIS_BIN_DIR}') {
                 path = bindMap.HYBRIS_BIN_DIR
             }
-            println("searching extensions in path: $path")
+            println "searching extensions in path: $path"
             allExtensions.addAll(scanPath(path))
         }
 
