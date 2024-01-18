@@ -11,7 +11,7 @@ class DumpPlatformClassPathTask extends DefaultTask {
 
     public static final String PROP_SAP_COMMERCE_PLATFORM_START_PARAMETER = 'commercePlatformHome'
 
-    public static final String PROP_SAP_COMMERCE_PLATFORM_HOME = 'sap.commerce.platform.home'
+    // public static final String PROP_SAP_COMMERCE_PLATFORM_HOME = 'sap.commerce.platform.home'
 
     @Input
     @Optional

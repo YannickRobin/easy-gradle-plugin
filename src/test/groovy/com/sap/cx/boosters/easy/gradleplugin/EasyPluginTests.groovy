@@ -22,7 +22,7 @@ class EasyPluginTests extends Specification {
 
         when:
         def commerceHomeDirectory = '/Users/I309827/SAPDevelop/hybris/hybris-2211-easy/hybris'
-        def coreExtDirectory = new File(commerceHomeDirectory, 'bin/platform/ext/core')
+        def coreExtDirectory = new File(commerceHomeDirectory, 'ext/core')
 
         // def filesFilter = /^.*ext\/.*\/lib\/.*\.jar$/
         // commercePlatformDirectory.traverse(type: FileType.FILES) {
