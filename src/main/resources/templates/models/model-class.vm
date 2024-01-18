@@ -24,12 +24,14 @@ import $argument
 #end
 import de.hybris.bootstrap.annotations.Accessor
 import de.hybris.platform.servicelayer.model.ItemModelContext
+import com.sap.cx.boosters.easy.core.annotations.Model
 
 #set($lastDotIndex = $itemType.superTypeModelClass.lastIndexOf('.'))
 #set($superClassName = $itemType.superTypeModelClass.substring($lastDotIndex+1))
 /**
 * Generated model class for easy type ${itemType.code}.
 */
+@Model(code='${itemType.code}')
 class ${itemType.modelClassName} extends $superClassName {
 
     /**<i>Generated model type code constant.</i>*/

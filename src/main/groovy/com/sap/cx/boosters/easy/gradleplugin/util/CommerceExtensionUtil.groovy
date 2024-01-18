@@ -1,12 +1,7 @@
 package com.sap.cx.boosters.easy.gradleplugin.util
 
-import com.sap.cx.boosters.easy.gradleplugin.data.CommerceExtensionInfo
-import groovy.io.FileType
-import groovy.text.GStringTemplateEngine
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import java.nio.file.Path
 
 class CommerceExtensionUtil {
 
@@ -16,59 +11,56 @@ class CommerceExtensionUtil {
 
     static Map<String,Set<File>> buildPlatformClassPath(String commercePlatformHome) {
 
+        def commercePlatformDirectory = new File(resolveHome(commercePlatformHome))
+        def bootstrapJar = new File(commercePlatformDirectory,'bootstrap/bin/ybootstrap.jar')
+
         def classPath = [:] as Map<String,Set<File>>
 
-        if (!commercePlatformHome) {
+        if (!bootstrapJar.exists()) {
+            println "no bootstrap.jar file found: ${bootstrapJar.absolutePath}"
             return classPath
         }
 
-        def commerceHomeDirectory = new File(resolveHome(commercePlatformHome))
-        def commercePlatformDirectory = new File(commerceHomeDirectory, 'bin/platform')
-
-        if (!commercePlatformDirectory.exists()) {
-            println "commerce platform dir not found ${commercePlatformDirectory.absolutePath}"
-            return classPath
+        def groovyShell = new GroovyShell().tap{
+            classLoader.addURL(bootstrapJar.toURI().toURL())
         }
 
-        def localExtensionsFile = new File(commerceHomeDirectory, 'config/localextensions.xml')
+        groovyShell.setVariable('commercePlatformHome',commercePlatformHome)
+        def platformConfig = groovyShell.run('de.hybris.bootstrap.config.PlatformConfig.getInstance(de.hybris.bootstrap.config.ConfigUtil.getSystemConfig(commercePlatformHome))','platformConfig.groovy',[] as String [])
+        println "platformConfig.platformHome: ${platformConfig.platformHome}"
+
+        def commerceConfigDir = platformConfig.systemConfig.configDir as String
+
+        def localExtensionsFile = new File(commerceConfigDir, 'localextensions.xml')
         if (!localExtensionsFile.exists()) {
             println "no localextensions.xml file found ${localExtensionsFile.absolutePath}"
             return classPath
         }
 
-        classPath[PLATFORM]= [] as Set<File>
+        groovyShell.setVariable('platformConfig',platformConfig)
+        def fullClassPath = groovyShell.run('de.hybris.bootstrap.loader.HybrisClasspathBuilder.getClassPathAsList(platformConfig)','hybrisClassPath.groovy',[] as String []) as Set<File>
 
-        // bootstrap libraries
-        new File(commercePlatformDirectory,'bootstrap/bin').traverse(type: FileType.FILES, nameFilter: ~/.*\.jar$/) {
-            classPath[PLATFORM] << it
-        }
+        classPath[PLATFORM] = fullClassPath
 
-        def extensions = getExtensions(localExtensionsFile)
+        // final List<ExtensionInfo> extensions = platformConfig.getExtensionInfosInBuildOrder();
+        def extensions = platformConfig.extensionInfosInBuildOrder
 
         def jarFilter = { dir, name -> name.endsWith('.jar') } as FilenameFilter
 
-        extensions.each { info ->
+        extensions.findAll{it.webExtension}.each{ extInfo ->
 
-            def addJars = {String ext, String path ->
-                def cpElement = new File(info.rootPath, path)
-                if (cpElement.exists()) classPath[ext].addAll(cpElement.listFiles(jarFilter))
+            def extensionDirectory = extInfo.extensionDirectory as File
+            def extensionName = extInfo.name as String
+
+            log.debug "adding classpath for extension: ${extInfo.name}"
+            classPath[extensionName] = [] as Set<File>
+
+            new File(extensionDirectory,'web/webroot/WEB-INF/lib').with{
+                if (exists()) classPath[extensionName].addAll(listFiles(jarFilter))
             }
 
-            def addFolder = {String ext, String path ->
-                def cpElement = new File(info.rootPath, path)
-                if (cpElement.exists()) classPath[ext].add(cpElement)
-            }
-
-            log.debug "adding classpath for extension: ${info.name}"
-            addJars(PLATFORM, 'bin')
-            addJars(PLATFORM, 'lib')
-            addFolder(PLATFORM, 'classes')
-            addFolder(PLATFORM, 'resources')
-
-            if (info.webmodule) {
-                classPath[info.name] = [] as Set<File>
-                addJars(info.name, 'web/webroot/WEB-INF/lib')
-                addFolder(info.name, 'web/webroot/WEB-INF/classes')
+            new File(extensionDirectory,'web/webroot/WEB-INF/classes').with{
+                if (exists()) classPath[extensionName].add(it)
             }
 
         }
@@ -79,101 +71,6 @@ class CommerceExtensionUtil {
         }
 
         classPath
-
-    }
-
-    static Set<CommerceExtensionInfo> getExtensions(File localExtensionsFile) {
-
-        def xmlParser = new groovy.xml.XmlSlurper()
-        def templateEngine = new GStringTemplateEngine()
-
-        def hybrisConfig = xmlParser.parse(localExtensionsFile)
-        def hybrisBinDir = Path.of(localExtensionsFile.parentFile.parent, 'bin').toFile()
-        def bindMap = [HYBRIS_BIN_DIR: hybrisBinDir.absolutePath]
-        def resolvePath = { String path -> templateEngine.createTemplate(path).make(bindMap).toString() }
-
-        def parseExtensionInfo = { File it ->
-
-            def extensioninfo = xmlParser.parse(it)
-            def extensionName = extensioninfo.extension[0].'@name'.text()
-            def requiresExtension = extensioninfo.extension[0].'requires-extension'.collect { it.'@name'.text() }
-            def coremodule = extensioninfo.extension[0].'coremodule'.size() > 0
-            def webmodule = extensioninfo.extension[0].'webmodule'.size() > 0
-            def info = new CommerceExtensionInfo(
-                    name: extensionName,
-                    rootPath: it.parentFile,
-                    coremodule: coremodule,
-                    webmodule: webmodule,
-                    requires: requiresExtension
-            )
-            info
-
-        }
-
-        def scanPath = { String path ->
-
-            def extensions = [] as Set<CommerceExtensionInfo>
-            def extensionPath = new File(resolvePath(path))
-            extensionPath.traverse(type: FileType.FILES, nameFilter: 'extensioninfo.xml', maxDepth: 3) {
-                log.debug "parsing extensioninfo file: ${it}"
-                extensions << parseExtensionInfo(it)
-            }
-
-            return extensions
-
-        }
-
-        def allExtensions = [] as Set<CommerceExtensionInfo>
-        def paths = hybrisConfig.extensions[0].path.collect { it.'@dir'.text() } as List<String>
-
-        paths.toSet().each { path ->
-            if (path == '\${HYBRIS_BIN_DIR}') {
-                path = bindMap.HYBRIS_BIN_DIR
-            }
-            println "searching extensions in path: $path"
-            allExtensions.addAll(scanPath(path))
-        }
-
-        def coreExtensions = scanPath('$HYBRIS_BIN_DIR/platform/ext')
-        def allExtensionsMap = allExtensions.collectEntries { [(it.name): it] } as Map<String, CommerceExtensionInfo>
-
-        coreExtensions.each { allExtensionsMap.put(it.name, it) }
-        def configuredExtensionNames = coreExtensions*.name
-
-        configuredExtensionNames += hybrisConfig.extensions[0].extension.collect { it.'@name'.text() }.findAll { it }
-
-        // adding extensions configured with absolute path dir
-        hybrisConfig.extensions[0].extension.collect { it.'@dir'.text() }.findAll { it }.each { extBaseDir ->
-            def info = parseExtensionInfo(new File(resolvePath(extBaseDir), 'extensioninfo.xml'))
-            allExtensionsMap[info.name] = info
-            configuredExtensionNames << info.name
-        }
-
-        def requiredExtensions = [] as Set<CommerceExtensionInfo>
-
-        def add
-        add = { String extName ->
-            log.debug "adding configured extension: ${extName}"
-            def extInfo = allExtensionsMap[extName]
-            if (extInfo) {
-                if (requiredExtensions.add(extInfo)) {
-                    if (allExtensionsMap[extName] && allExtensionsMap[extName].requires) {
-                        allExtensionsMap[extName].requires.each { require ->
-                            log.debug "adding required extension: ${require}"
-                            // NOTE trampoline doesn't to work here
-                            // add.trampoline(require)
-                            add(require)
-                        }
-                    }
-                }
-            } else {
-                log.debug "skipped invalid extension ${extName}"
-            }
-        }
-
-        configuredExtensionNames.each { add(it) }
-
-        return requiredExtensions
 
     }
 

@@ -58,23 +58,38 @@ class EasyPlugin implements Plugin<Project> {
 
         } else {
 
-            def platformHome = project.properties[PROP_SAP_COMMERCE_PLATFORM_HOME] ?: project.properties[PROP_SAP_COMMERCE_PLATFORM_START_PARAMETER] as String
-            println "platformHome: ${platformHome}"
-            def classPathMap = CommerceExtensionUtil.buildPlatformClassPath(platformHome)
+            def platformHome = project.properties[PROP_COMMERCE_PLATFORM_HOME] ?: project.properties[PROP_SAP_COMMERCE_PLATFORM_START_PARAMETER] as String
+            project.logger.info "platformHome: ${platformHome}"
 
-            project.extensions.add(
-                    EXT_COMMERCE_PLATFORM_LIBRARIES,
-                    project.files(classPathMap[PLATFORM])
-            )
-            project.dependencies.add('implementation', project.extensions.getByName(EXT_COMMERCE_PLATFORM_LIBRARIES))
+            def bootstrapJar = new File(platformHome,'bootstrap/bin/ybootstrap.jar')
 
-            // def localExtensionsFile = new File(platformHome, 'config/localextensions.xml')
-            // def extensions = CommerceExtensionUtil.getExtensions(localExtensionsFile)
-            classPathMap.findAll{it.key != PLATFORM && !DUMMY_WEB_EXTENSIONS.contains(it.key)}.each{k,v ->
-                println "creating sourceSet: ${k}"
-                project.sourceSets.create(k) as SourceSet
-                project.dependencies.add("${k}Implementation", project.files(classPathMap[k]))
-                project.configurations.getByName("${k}Implementation").extendsFrom(project.configurations.getByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME))
+            if (bootstrapJar.exists()) {
+
+                def classPathMap = CommerceExtensionUtil.buildPlatformClassPath(platformHome)
+
+                if (classPathMap[PLATFORM]) {
+
+                    project.extensions.add(
+                            EXT_COMMERCE_PLATFORM_LIBRARIES,
+                            project.files(classPathMap[PLATFORM])
+                    )
+                    project.dependencies.add('implementation', project.extensions.getByName(EXT_COMMERCE_PLATFORM_LIBRARIES))
+
+                } else {
+                    project.logger.warn 'empty platform classpath'
+                }
+
+                // def localExtensionsFile = new File(platformHome, 'config/localextensions.xml')
+                // def extensions = CommerceExtensionUtil.getExtensions(localExtensionsFile)
+                classPathMap.findAll{it.key != PLATFORM && !DUMMY_WEB_EXTENSIONS.contains(it.key)}.each{k,v ->
+                    println "creating sourceSet: ${k}"
+                    project.sourceSets.create(k) as SourceSet
+                    project.dependencies.add("${k}Implementation", project.files(classPathMap[k]))
+                    project.configurations.getByName("${k}Implementation").extendsFrom(project.configurations.getByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME))
+                }
+
+            } else {
+                project.logger.warn "no bootstrap.jar file found: ${bootstrapJar.absolutePath}"
             }
 
         }
