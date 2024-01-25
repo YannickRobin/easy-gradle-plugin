@@ -62,7 +62,7 @@ class ${itemType.modelClassName} extends $superClassName {
     #set($isDynamic = $attribute.persistence.type.value == "dynamic")
     #set($isLocalized = $attribute.type.startsWith("localized"))
     #set($isInitial = $attribute.modifiers.containsKey("initial") && $attribute.modifiers.get("initial"))
-    #set($isWritable = $isInitial || $attribute.modifiers.containsKey("write") && $attribute.modifiers.get("write"))
+    #set($isWritable = $isInitial || !($attribute.modifiers.containsKey("write")) || ($attribute.modifiers.containsKey("write") && $attribute.modifiers.get("write")))
     #set($lastDotIndex = $attribute.typeClass.lastIndexOf('.'))
     #if($attribute.typeClassArguments != $null)
     #set($arguments = "")
@@ -123,7 +123,7 @@ class ${itemType.modelClassName} extends $superClassName {
     *
     * @param value the $attributeQualifier
     */
-    @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
+    @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.SETTER)
     void set$capitalizedQualifier(final $attributeClass value) {
         set$capitalizedQualifier(value, null)
     }
@@ -135,7 +135,7 @@ class ${itemType.modelClassName} extends $superClassName {
     * @param loc the value localization key
     * @throws IllegalArgumentException if localization key cannot be mapped to data language
     */
-    @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.GETTER)
+    @Accessor(qualifier = $attributeQualifier.toUpperCase(), type = Accessor.Type.SETTER)
     void set$capitalizedQualifier(final $attributeClass value, final Locale loc) {
         getPersistenceContext().setLocalizedValue($attributeQualifier.toUpperCase(), loc, value)
     }
