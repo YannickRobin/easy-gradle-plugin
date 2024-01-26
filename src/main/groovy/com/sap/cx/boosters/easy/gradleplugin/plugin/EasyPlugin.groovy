@@ -52,7 +52,7 @@ class EasyPlugin implements Plugin<Project> {
         }
 
         // add commerce libraries
-        if (!(project.hasProperty(PROP_SAP_COMMERCE_PLATFORM_START_PARAMETER) || project.hasProperty(PROP_SAP_COMMERCE_PLATFORM_HOME))) {
+        if (!(project.hasProperty(PROP_SAP_COMMERCE_PLATFORM_START_PARAMETER) || project.hasProperty(PROP_COMMERCE_PLATFORM_HOME))) {
 
             project.logger.warn "no commerce platform home is set, specify ${PROP_COMMERCE_PLATFORM_HOME} in gradle.properties file"
 

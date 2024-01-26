@@ -1,5 +1,6 @@
 package com.sap.cx.boosters.easy.gradleplugin.tasks
 
+import com.sap.cx.boosters.easy.gradleplugin.plugin.EasyPlugin
 import com.sap.cx.boosters.easy.gradleplugin.util.CommerceExtensionUtil
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
@@ -10,8 +11,6 @@ import org.gradle.api.tasks.TaskAction
 class DumpPlatformClassPathTask extends DefaultTask {
 
     public static final String PROP_SAP_COMMERCE_PLATFORM_START_PARAMETER = 'commercePlatformHome'
-
-    // public static final String PROP_SAP_COMMERCE_PLATFORM_HOME = 'sap.commerce.platform.home'
 
     @Input
     @Optional
@@ -28,8 +27,8 @@ class DumpPlatformClassPathTask extends DefaultTask {
             def configuredCommercePlatformHome = project.gradle.startParameter.projectProperties.commercePlatformHome
             if (null != configuredCommercePlatformHome && !configuredCommercePlatformHome.isBlank()) {
                 this.commercePlatformHome = configuredCommercePlatformHome
-            } else if (project.properties.containsKey(PROP_SAP_COMMERCE_PLATFORM_HOME)) {
-                this.commercePlatformHome = project.properties.get(PROP_SAP_COMMERCE_PLATFORM_HOME)
+            } else if (project.properties.containsKey(EasyPlugin.PROP_COMMERCE_PLATFORM_HOME)) {
+                this.commercePlatformHome = project.properties.get(EasyPlugin.PROP_COMMERCE_PLATFORM_HOME)
                 if (null == this.commercePlatformHome || this.commercePlatformHome.isBlank()) {
                     throw new GradleException('Commerce platform home is not configured.')
                 }
