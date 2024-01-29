@@ -1,13 +1,18 @@
 package com.sap.cx.boosters.easy.gradleplugin.plugin
 
 import com.sap.cx.boosters.easy.gradleplugin.tasks.*
+import static com.sap.cx.boosters.easy.gradleplugin.tasks.DumpPlatformClassPathTask.*
 import com.sap.cx.boosters.easy.gradleplugin.util.CommerceExtensionUtil
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.GroovyPlugin
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.testing.Test
+
+import static com.sap.cx.boosters.easy.gradleplugin.util.CommerceExtensionUtil.PLATFORM
 
 class EasyPlugin implements Plugin<Project> {
 
@@ -15,7 +20,19 @@ class EasyPlugin implements Plugin<Project> {
 
     public static final String PROP_COMMERCE_PLATFORM_HOME = 'sap.commerce.easy.platform.home'
 
+    public static final List<String> DUMMY_WEB_EXTENSIONS = List.of(
+            'processing',
+            'mediaweb',
+            'testweb',
+            'maintenanceweb',
+            'tomcatembeddedserver',
+            'embeddedserver',
+            'groovynature',
+            'acceleratorservices'
+    )
+
     void apply(Project project) {
+
         project.plugins.apply(GroovyPlugin)
 
         project.plugins.withType(GroovyPlugin).configureEach {
@@ -35,15 +52,46 @@ class EasyPlugin implements Plugin<Project> {
         }
 
         // add commerce libraries
-        if (!project.hasProperty(PROP_COMMERCE_PLATFORM_HOME)) {
+        if (!(project.hasProperty(PROP_SAP_COMMERCE_PLATFORM_START_PARAMETER) || project.hasProperty(PROP_COMMERCE_PLATFORM_HOME))) {
+
             project.logger.warn "no commerce platform home is set, specify ${PROP_COMMERCE_PLATFORM_HOME} in gradle.properties file"
+
         } else {
 
-            project.extensions.add(
-                    EXT_COMMERCE_PLATFORM_LIBRARIES,
-                    project.files(CommerceExtensionUtil.buildPlatformClassPath(project.properties[PROP_COMMERCE_PLATFORM_HOME] as String))
-            )
-            project.dependencies.add('implementation', project.extensions.getByName(EXT_COMMERCE_PLATFORM_LIBRARIES))
+            def platformHome = project.properties[PROP_COMMERCE_PLATFORM_HOME] ?: project.properties[PROP_SAP_COMMERCE_PLATFORM_START_PARAMETER] as String
+            project.logger.info "platformHome: ${platformHome}"
+
+            def bootstrapJar = new File(platformHome,'bootstrap/bin/ybootstrap.jar')
+
+            if (bootstrapJar.exists()) {
+
+                def classPathMap = CommerceExtensionUtil.buildPlatformClassPath(platformHome)
+
+                if (classPathMap[PLATFORM]) {
+
+                    project.extensions.add(
+                            EXT_COMMERCE_PLATFORM_LIBRARIES,
+                            project.files(classPathMap[PLATFORM])
+                    )
+                    project.dependencies.add('implementation', project.extensions.getByName(EXT_COMMERCE_PLATFORM_LIBRARIES))
+
+                } else {
+                    project.logger.warn 'empty platform classpath'
+                }
+
+                // def localExtensionsFile = new File(platformHome, 'config/localextensions.xml')
+                // def extensions = CommerceExtensionUtil.getExtensions(localExtensionsFile)
+                classPathMap.findAll{it.key != PLATFORM && !DUMMY_WEB_EXTENSIONS.contains(it.key)}.each{k,v ->
+                    println "creating sourceSet: ${k}"
+                    project.sourceSets.create(k) as SourceSet
+                    project.dependencies.add("${k}Implementation", project.files(classPathMap[k]))
+                    project.configurations.getByName("${k}Implementation").extendsFrom(project.configurations.getByName(JavaPlugin.IMPLEMENTATION_CONFIGURATION_NAME))
+                }
+
+            } else {
+                project.logger.warn "no bootstrap.jar file found: ${bootstrapJar.absolutePath}"
+            }
+
         }
 
         project.dependencies.add('testImplementation', 'org.junit.vintage:junit-vintage-engine:5.10.1')
