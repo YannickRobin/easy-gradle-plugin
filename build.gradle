@@ -14,8 +14,8 @@ plugins {
 // maven coordinates, artifactId corresponds to the name of the project that corresponds to
 // to the rootProject.name in settings.gradle
 // or the name of the root folder of the plugin project
-group 'io.github.yannickrobin'
-version '0.0.4'
+group project.properties['group']
+version project.properties['version']
 
 gradlePlugin {
     website = 'https://github.com/YannickRobin/easy-gradle-plugin'
@@ -23,6 +23,7 @@ gradlePlugin {
     plugins {
         easyPlugin {
             id = "${group}.${rootProject.name}"
+            version = project.properties['version']
             implementationClass = 'com.sap.cx.boosters.easy.gradleplugin.plugin.EasyPlugin'
             displayName = 'Gradle  Plugin for Easy, Runtime Add-on Framework for SAP Commerce Cloud'
             description = 'This plugin is used to manage Easy extensions as part of Easy Framework for SAP Commerce Cloud'

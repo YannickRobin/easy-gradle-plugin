@@ -4,6 +4,7 @@ package com.sap.cx.boosters.easy.gradleplugin.tasks
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.options.Option
 
 abstract class AbstractEasyExtensionTask extends AbstractEasyTask {
 

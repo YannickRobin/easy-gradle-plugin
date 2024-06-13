@@ -6,5 +6,5 @@
  */
 
 plugins {
-    id 'io.github.yannickrobin.easy-gradle-plugin' version '0.0.4'
+    id '${EASY_GRADLE_PLUGIN_ID}' version '${EASY_GRADLE_PLUGIN_VERSION}'
 }
