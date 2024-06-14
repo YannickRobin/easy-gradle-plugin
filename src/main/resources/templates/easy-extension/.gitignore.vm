@@ -1,7 +1,6 @@
 ## Ignore Gradle
 gradle
 .gradle
-gradle.properties
 build
 gradlew.*
 ## Ignore intelliJ 
