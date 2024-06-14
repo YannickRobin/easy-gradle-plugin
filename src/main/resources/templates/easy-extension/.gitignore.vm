@@ -1,14 +1,22 @@
-## Ignore Gradle
+# Ignore Gradle
 gradle
 .gradle
 build
 gradlew.*
-## Ignore intelliJ 
+
+# Ignore intelliJ
+.idea/
 *.iml
-## Ignore Eclipse 
+
+# Ignore Eclipse 
 .project
 .classpath
-.settings
-bin
-## Ignore MAC OS
+.settings/
+bin/
+
+# Ignore VS Code
+.vscode/
+
+# System-specific files
 .DS_Store
+Thumbs.db
