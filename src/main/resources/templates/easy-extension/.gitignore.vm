@@ -1,8 +1,15 @@
+## Ignore Gradle
 gradle
 .gradle
+gradle.properties
+build
 gradlew.*
+## Ignore intelliJ 
 *.iml
+## Ignore Eclipse 
 .project
 .classpath
 .settings
 bin
+## Ignore MAC OS
+.DS_Store
