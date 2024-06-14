@@ -8,4 +8,5 @@
 
 sap.commerce.easy.extension.easy.version = ${EASY_VERSION}
 sap.commerce.easy.extension.base.package = ${EASY_EXTENSION_BASE_PACKAGE}
+sap.commerce.easy.repository.code = ${EASY_REPOSITORY_CODE}
 sap.commerce.easy.extension.id = ${EASY_EXTENSION_ID}

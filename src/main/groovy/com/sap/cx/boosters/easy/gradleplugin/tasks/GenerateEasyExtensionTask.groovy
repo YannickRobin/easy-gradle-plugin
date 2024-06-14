@@ -1,17 +1,12 @@
 package com.sap.cx.boosters.easy.gradleplugin.tasks
 
-import com.sap.cx.boosters.easy.gradleplugin.data.EasyTypes
+
 import com.sap.cx.boosters.easy.gradleplugin.util.ScaffoldingGenerator
-
-import com.fasterxml.jackson.databind.ObjectMapper
-import groovy.io.FileType
+import org.apache.commons.lang3.StringUtils
 import org.codehaus.groovy.GroovyException
-
-import org.gradle.api.internal.tasks.userinput.UserInputHandler;
 import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
+import org.gradle.api.internal.tasks.userinput.UserInputHandler
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
@@ -19,7 +14,7 @@ import org.gradle.api.tasks.options.Option
 class GenerateEasyExtensionTask extends DefaultTask {
 
     static final String DEFAULT_EASY_EXTENSION_ID = 'helloworld'
-    static final String DEFAULT_EASY_BASE_PACKAGE = 'com.mycompany.commerce.easy.extension'     
+    static final String DEFAULT_EASY_BASE_PACKAGE = 'com.mycompany.commerce.easy.extension'
     static final String DEFAULT_EASY_VERSION = '0.3'
 
     @Input
@@ -30,11 +25,13 @@ class GenerateEasyExtensionTask extends DefaultTask {
     @Optional
     String basePackage
 
-    @Internal
-    String extensionDescription = ''
+    @Input
+    @Optional
+    String extensionDescription
 
-    @Internal
-    String authors = ''
+    @Input
+    @Optional
+    String authors
 
     boolean noninteractive = false
 
@@ -44,70 +41,78 @@ class GenerateEasyExtensionTask extends DefaultTask {
     }
 
     @Option(option = 'extensionId', description = 'Id of the extension')
-    void setExtensionId(String extensionId) { 
+    void setExtensionId(String extensionId) {
         this.extensionId = extensionId
     }
 
     @Option(option = 'basePackage', description = 'Base package of the extension')
-    void setBasePackage(String basePackage) { 
+    void setBasePackage(String basePackage) {
         this.basePackage = basePackage
     }
 
+    @Option(option = 'extensionDescription', description = 'Description of the extension')
+    void setExtensionDescription(String extensionDescription) {
+        this.extensionDescription = extensionDescription
+    }
+
+    @Option(option = 'authors', description = 'Authors of the extension')
+    void setAuthors(String authors) {
+        this.authors = authors
+    }
+
     @Option(option = 'noninteractive', description = 'Run in silent mode')
-    void setNoninteractive(boolean noninteractive) { 
+    void setNoninteractive(boolean noninteractive) {
         this.noninteractive = noninteractive
     }
 
     @Input
-    public boolean getNoninteractive() {
-        return noninteractive;
+    boolean getNoninteractive() {
+        return noninteractive
     }
 
     @TaskAction
     void generateEasyExtension() {
         if (project == project.gradle.rootProject) {
-            this.initializeExtensionId()
-            this.initializeBasePackage()            
+            this.initialize()
+            def userInput = getServices().get(UserInputHandler.class)
 
             logger.info("noninteractive: " + noninteractive)
 
-            if (!noninteractive)
-            {
-                def userInput = getServices().get(UserInputHandler.class);
-                this.extensionId = userInput.askQuestion("What is the extension id? ", this.extensionId)
-                this.basePackage = userInput.askQuestion("What is the extension base package? ", this.basePackage)
-                this.extensionDescription = userInput.askQuestion("What is the extension description?", this.extensionDescription)                
-                this.authors = userInput.askQuestion("What is/are the author(s) of this extension (use comma separator)", this.authors)
+            this.extensionId = StringUtils.isEmpty(this.extensionId) ? userInput.askUser { it -> it.askQuestion("What is the extension id? ", DEFAULT_EASY_EXTENSION_ID) }.get() : this.extensionId
+
+            if (!noninteractive) {
+                this.basePackage = StringUtils.isEmpty(this.basePackage) ? userInput.askUser { it -> it.askQuestion("What is the extension base package? ", DEFAULT_EASY_BASE_PACKAGE) }.get() : this.basePackage
+                this.extensionDescription = StringUtils.isEmpty(this.extensionDescription) ? userInput.askUser { it -> it.askQuestion("What is the extension description? ", "Lorem ipsum dollar") }.get() : this.extensionDescription
+                this.authors = StringUtils.isEmpty(this.authors) ? userInput.askUser { it -> it.askQuestion("Who is/are the author(s) of this extension? ", "XYZ, ABC") }.get() : this.authors
             }
 
             this.extensionId = this.extensionId.replaceAll('[^a-zA-Z0-9-]', '')
             authors = authors.replaceAll(" ,", ",").replaceAll(", ", ",").replaceAll(",", "\",\"")
             def easyExtensionPackageName = this.basePackage + '.' + this.extensionId.replace('-', '').toLowerCase()
             def easyExtensionPackageFolder = easyExtensionPackageName.replaceAll('\\.', '/')
-
+            def plugin = project.pluginManager.findPlugin('io.github.yannickrobin.easy-gradle-plugin')
             def parameters = [
-                    'EASY_GRADLE_PLUGIN_GROUP_ID'  : project.group.toString(),
-                    'EASY_GRADLE_PLUGIN_NAME'      : project.name,
-                    'EASY_GRADLE_PLUGIN_VERSION'   : project.version.toString(),
-                    'EASY_VERSION'                 : DEFAULT_EASY_VERSION,                    
+                    'EASY_REPOSITORY_CODE'         : project.properties.get('sap.commerce.easy.repository.code'),
+                    'EASY_GRADLE_PLUGIN_ID'        : plugin.id,
+                    'EASY_GRADLE_PLUGIN_VERSION'   : '0.0.5',
+                    'EASY_VERSION'                 : DEFAULT_EASY_VERSION,
                     'EASY_EXTENSION_ID'            : this.extensionId,
                     'EASY_EXTENSION_BASE_PACKAGE'  : this.basePackage,
                     'EASY_EXTENSION_PACKAGE_NAME'  : easyExtensionPackageName,
-                    'EASY_EXTENSION_PACKAGE_FOLDER': easyExtensionPackageFolder,                 
+                    'EASY_EXTENSION_PACKAGE_FOLDER': easyExtensionPackageFolder,
                     'EASY_EXTENSION_DESCRIPTION'   : this.extensionDescription,
                     'EASY_EXTENSION_AUTHORS'       : this.authors
             ]
 
-            logger.info("*** Configuration for extension generation ***")
-            logger.info("Repository Directory: '${project.projectDir}'")
-            logger.info("Easy version: '${parameters.EASY_VERSION}'")
-            logger.info("Extension Id: '${parameters.EASY_EXTENSION_ID}'")
-            logger.info("Extension Base Package: '${parameters.EASY_EXTENSION_BASE_PACKAGE}'")            
-            logger.info("Extension Package Name: '${parameters.EASY_EXTENSION_PACKAGE_NAME}'")
-            logger.info("Extension Package Folder: '${parameters.EASY_EXTENSION_PACKAGE_FOLDER}'")
-            logger.info("Extension Description: '${parameters.EASY_EXTENSION_PACKAGE_FOLDER}'")
-            logger.info("Extension Authors: '${parameters.EASY_EXTENSION_PACKAGE_FOLDER}'")
-            logger.info("******")
+            println("*** Configuration for extension generation ***")
+            println("Easy version: '${parameters.EASY_VERSION}'")
+            println("Extension Id: '${parameters.EASY_EXTENSION_ID}'")
+            println("Extension Base Package: '${parameters.EASY_EXTENSION_BASE_PACKAGE}'")
+            println("Extension Package Name: '${parameters.EASY_EXTENSION_PACKAGE_NAME}'")
+            println("Extension Package Folder: '${parameters.EASY_EXTENSION_PACKAGE_FOLDER}'")
+            println("Extension Description: '${parameters.EASY_EXTENSION_DESCRIPTION}'")
+            println("Extension Authors: '${parameters.EASY_EXTENSION_AUTHORS}'")
+            println("**********************************************")
 
             this.generateInternal(parameters)
             this.addProjectAsSubProjectToRoot()
@@ -116,13 +121,18 @@ class GenerateEasyExtensionTask extends DefaultTask {
         }
     }
 
+    void initialize() {
+        this.initializeExtensionId()
+        this.initializeBasePackage()
+        this.initializeDescription()
+        this.initializeAuthors()
+    }
+
     void initializeExtensionId() {
         if (null == this.extensionId || this.extensionId.isBlank()) {
             def configuredExtensionId = project.gradle.startParameter.projectProperties.extensionId
             if (null != configuredExtensionId && !configuredExtensionId.isBlank()) {
                 this.extensionId = configuredExtensionId
-            } else {
-                this.extensionId = DEFAULT_EASY_EXTENSION_ID
             }
         }
     }
@@ -134,13 +144,29 @@ class GenerateEasyExtensionTask extends DefaultTask {
                 this.basePackage = configuredBasePackage
             } else if (project.properties.containsKey('sap.commerce.easy.extension.base.package')) {
                 this.basePackage = project.properties.get('sap.commerce.easy.extension.base.package')
-            } else {
-                this.basePackage = DEFAULT_EASY_BASE_PACKAGE
             }
         }
     }
 
-    private void generateInternal(Map<String, String> parameters) {
+    void initializeDescription() {
+        if (null == this.extensionDescription || this.extensionDescription.isBlank()) {
+            def configuredDescription = project.gradle.startParameter.projectProperties.extensionDescription
+            if (null != configuredDescription && !configuredDescription.isBlank()) {
+                this.extensionDescription = configuredDescription
+            }
+        }
+    }
+
+    void initializeAuthors() {
+        if (null == this.authors || this.authors.isBlank()) {
+            def configuredAuthors = project.gradle.startParameter.projectProperties.authors
+            if (null != configuredAuthors && !configuredAuthors.isBlank()) {
+                this.authors = configuredAuthors
+            }
+        }
+    }
+
+    private void generateInternal(def parameters) {
         println("Generating new easy extension in current directory")
 
         def extensionDirectory = new File(project.projectDir, this.extensionId)
@@ -156,7 +182,7 @@ class GenerateEasyExtensionTask extends DefaultTask {
         extensionDirectory = new File(project.projectDir, this.extensionId)
         URL resourceTemplateFolder = Thread.currentThread().contextClassLoader.getResource("templates/easy-extension")
         if (resourceTemplateFolder == null) {
-            throw new IllegalArgumentException("Template folder not found");
+            throw new IllegalArgumentException("Template folder not found")
         }
 
         def templateList = [
@@ -176,36 +202,15 @@ class GenerateEasyExtensionTask extends DefaultTask {
                 'src/main/groovy/__EASY_EXTENSION_PACKAGE_FOLDER__/controller/HelloWorldController.groovy.vm',
                 'src/test/groovy/__EASY_EXTENSION_PACKAGE_FOLDER__/service/HelloWorldServiceTest.groovy.vm',
                 'src/e2etest/groovy/__EASY_EXTENSION_PACKAGE_FOLDER__/controller/HelloWorldControllerTest.groovy.vm',
-        ];
+        ]
 
         ScaffoldingGenerator scaffoldingGenerator = new ScaffoldingGenerator("templates/easy-extension")
-        scaffoldingGenerator.copyTemplateFiles(templateList, extensionDirectory.getPath(), parameters)
+        scaffoldingGenerator.copyTemplateFiles(templateList, extensionDirectory.getPath(), parameters as Map<String, String>)
+
+        println("Generated new easy extension [${this.extensionId}] in current directory.")
     }
 
-    private void createEasyTypeDescriptor(File extensionDirectory) {
-        logger.info("creating easy types descriptor 'easytypes.json'")
-        File easyTypesDescriptor = new File(extensionDirectory, "easytypes.json")
-        this.createFile(easyTypesDescriptor)
-
-        EasyTypes easyTypes = new EasyTypes()
-
-        def objectMapper = new ObjectMapper()
-        easyTypesDescriptor.text = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(easyTypes)
-        logger.info("created easy types descriptor 'easytypes.json'")
-    }
-
-    private void createFile(File file) {
-        if (file.exists()) {
-            throw new GroovyException("A file already exists with name '$file.name'. Please remove it and try again.")
-        }
-        if (file.createNewFile()) {
-            logger.info("File '$file.absolutePath' created.")
-        } else {
-            throw new GroovyException("Failed to create file '$file.absolutePath'")
-        }
-    }
-
-    void addProjectAsSubProjectToRoot(){
+    void addProjectAsSubProjectToRoot() {
         def settingsFile = project.rootProject.file('settings.gradle')
         def settingsContent = settingsFile.text
 
@@ -213,6 +218,5 @@ class GenerateEasyExtensionTask extends DefaultTask {
             settingsContent += "\ninclude '${this.extensionId}' \n"
             settingsFile.text = settingsContent
         }
-    }    
-
+    }
 }

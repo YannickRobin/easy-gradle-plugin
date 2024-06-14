@@ -20,9 +20,9 @@ Execute the following pre-requisites:
   OpenJDK Runtime Environment Homebrew (build 17.0.9+0)
   OpenJDK 64-Bit Server VM Homebrew (build 17.0.9+0, mixed mode, sharing)
   ```
-- Install SAP Commerce Cloud 22.11
+- Install SAP Commerce Cloud 22.11.0 or higher
 - Setup [Easy Extension Framework 0.3](https://sap.github.io/easy-extension-framework/getting-started/) 
-- Install [Gradle](https://gradle.org/install/)
+- Install [Gradle](https://gradle.org/install/) version 8.8 or higher
 - Create your global gradle configuration properties file:
   - Unix/MacOS - `~/.gradle/gradle.properties`
   - Windows - `<WINDOWS_DRIVE>:\Users\<USER_NAME>\.gradle\gradle.properties`
@@ -35,7 +35,7 @@ Execute the following pre-requisites:
   # Value of easy.apiKey property configured in SAP Commerce Cloud (by default, this is 123456)
   sap.commerce.easy.api.key=123456
   # Path to the hybris home directory on your computer to add SAP Commerce Cloud libraries to your extension
-  sap.commerce.easy.platform.home=<SAP COMMERCE HOME>  
+  sap.commerce.easy.platform.home=<SAP COMMERCE HOME>
   ```
 
 ## Configure your local Easy Repository
@@ -57,7 +57,7 @@ In this example, we will create an Easy local repository `easy-repo-local` that 
 - Copy the following content into `build.gradle`
     ```groovy
     plugins {
-        id "io.github.yannickrobin.easy-gradle-plugin" version "0.0.4"
+        id "io.github.yannickrobin.easy-gradle-plugin" version "0.0.5"
     }
     ```
 - Create file `gradle.properties` in `easy-repo-local` directory with following content
@@ -76,10 +76,37 @@ In this example, we will generate an easy extension `helloworld` in local reposi
 > Configure project :
 searching extensions in path: /Users/xxxx/hybris_2211/hybris/bin
 
-What is the extension id?  (default: helloworld): 
+What is the extension id?  (default: helloworld): helloworld         
+
+
+What is the extension description?  (default: Lorem ipsum dollar): The helloworld Extension
+
+
+Who is/are the author(s) of this extension?  (default: XYZ, ABC): Snowman
+
+
+> Task :easy-ext-gen
+*** Configuration for extension generation ***
+Easy version: '0.3'
+Extension Id: 'helloworld'
+Extension Base Package: 'com.sap.cx.boosters.easy.extension'
+Extension Package Name: 'com.sap.cx.boosters.easy.extension.helloworld'
+Extension Package Folder: 'com/sap/cx/boosters/easy/extension/helloworld'
+Extension Description: 'The helloworld Extension'
+Extension Authors: 'Snowman'
+********************************************** 
+Generating new easy extension in current directory
+Generated new easy extension [helloworld] in current directory
 ```
 
-- Alternatively, you can run the same in non interactive mode `./gradlew easy-ext-gen --extensionId=helloworld --noninteractive`
+- Alternatively, you can run the same in non-interactive mode 
+    ```
+    ./gradlew easy-ext-gen --extensionId helloworld --noninteractive
+    ```
+- You can also provide all properties as parameters to avoid the user prompts as:
+    ```
+    ./gradlew easy-ext-gen --extensionId helloworld --basePackage io.github.me.easy --extensionDescription "My helloworld extension" --authors "Me"
+    ```
 - Change the current directory to point to your new extension `cd helloworld`
 - Run the command `gradle wrapper` to generate Gradle wrapper files
 - Execute tests with `./gradlew test` to check your extension is correctly setup (please note e2e test will not work until you have installed the extension as described below)
@@ -115,7 +142,8 @@ What is the extension id?  (default: helloworld):
 
 ## Install Extension
 - Update the repository as described above
-- Run the command `./gradlew easy-ext-install -PextensionId=helloworld` to install `helloworld` extension of the repository
+- Run the command `./gradlew :helloworld:easy-ext-install` to install `helloworld` extension of the repository from the repository directory
+- Alternatively, you can execute `./gradlew easy-ext-install` from the easy extension directory
   ```
   > Task :easy-ext-install
   API executed successfully. HTTP status: 200
@@ -129,22 +157,24 @@ What is the extension id?  (default: helloworld):
   ```
 
 ## Update Extension
-- Run the command `./gradlew easy-ext-reinstall -PextensionId=helloworld` to reinstall/reload/update `helloworld` extension of the repository
-  ```
-  > Task :easy-ext-reinstall
-  API executed successfully. HTTP status: 200
-  {
-  "eventId": "00000003",
-  "message": "Re-installation/reload request for extension helloworld submitted."
-  }
-  
-  BUILD SUCCESSFUL in 2s
-  1 actionable task: 1 executed
-  ```
+- Run the command `./gradlew :helloworld:easy-ext-reinstall` to reinstall/reload/update `helloworld` extension of the repository
+- Alternatively, you can execute `./gradlew easy-ext-reinstall` from the easy extension directory
+```
+> Task :easy-ext-reinstall
+API executed successfully. HTTP status: 200
+{
+"eventId": "00000003",
+"message": "Re-installation/reload request for extension helloworld submitted."
+}
+
+BUILD SUCCESSFUL in 2s
+1 actionable task: 1 executed
+```
 
 ## Uninstall Extension
-- Run the command `./gradlew easy-ext-uninstall -PextensionId=helloworld` to uninstall `helloworld` extension of the repository
-  ```
+- Run the command `./gradlew :helloworld:easy-ext-uninstall` to uninstall `helloworld` extension of the repository
+- Alternatively, you can execute `./gradlew easy-ext-uninstall` from the easy extension directory
+    ```
   > Task :easy-ext-uninstall
   API executed successfully. HTTP status: 200
   {
@@ -196,10 +226,8 @@ What is the extension id?  (default: helloworld):
         ]
       }
     ```
-  - Go to the extension directory
-    ```shell
-      ./gradlew easy-class-gen
-    ```
+  - Go to the extension directory `./gradlew :helloworld:easy-class-gen`
+  - Alternatively, you can execute `./gradlew easy-class-gen` from the easy extension directory
   - You can see find the generated classes inside generated source directory: `gensrc/main/groovy`
   - For example: `HelloWorldProductModel` class as:
     ```groovy
