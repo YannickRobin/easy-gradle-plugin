@@ -30,11 +30,11 @@ To list available gradle tasks
 
 # How to publish
 
-- Update the version of the plugin to fit with the version you want to publish into `build.gradle`:
+- Update the version of the plugin to fit with the version you want to publish into `gradle.properties`:
 
 ```
 group 'io.github.yannickrobin'
-version '0.0.4'
+version '0.0.5'
 ```
 
 - Before publish in gradle portal, for testing purpose you can publish the plugin in your local maven repository or in internal SAP artifactory repository.
