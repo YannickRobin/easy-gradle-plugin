@@ -18,8 +18,8 @@ group project.properties['group']
 version project.properties['version']
 
 gradlePlugin {
-    website = 'https://github.com/YannickRobin/easy-gradle-plugin'
-    vcsUrl = 'https://github.com/YannickRobin/easy-gradle-plugin'
+    website = 'https://github.com/yannickrobin/easy-gradle-plugin'
+    vcsUrl = 'https://github.com/yannickrobin/easy-gradle-plugin'
     plugins {
         easyPlugin {
             id = "${group}.${rootProject.name}"
