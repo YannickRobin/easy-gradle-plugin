@@ -1,9 +1,8 @@
 package com.sap.cx.boosters.easy.gradleplugin.tasks
 
-
+import groovyx.net.http.HttpResponseException
+import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.Input
-import com.sap.cx.boosters.easy.gradleplugin.plugin.extension.EasyPluginExtension
 
 class ListExtensionsTask extends AbstractEasyTask {
 
@@ -16,7 +15,17 @@ class ListExtensionsTask extends AbstractEasyTask {
     @TaskAction
     void list() {
         init()
-        restClient.get(path: "$easyApiBaseUrl/repository/$repositoryCode/extensions")
+
+        try{
+            def response = restClient.get(path: "$easyApiBaseUrl/repository/$repositoryCode/extensions")
+            printResponse(response)
+        }catch (HttpResponseException exception){
+            if(exception.response){
+                throw new GradleException(String.format("[Error] - %s", exception.response.data.errors[0].message))
+            }else{
+                throw new GradleException("Installation failed. Refer to logs for error details.")
+            }
+        }
     }
 
 }

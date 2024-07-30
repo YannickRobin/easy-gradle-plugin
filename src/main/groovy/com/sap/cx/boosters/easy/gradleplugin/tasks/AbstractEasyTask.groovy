@@ -1,8 +1,8 @@
 package com.sap.cx.boosters.easy.gradleplugin.tasks
 
-import groovy.json.JsonOutput
+import com.fasterxml.jackson.databind.ObjectMapper
+import groovyx.net.http.HttpResponseDecorator
 import groovyx.net.http.RESTClient
-import org.codehaus.groovy.GroovyException
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
@@ -75,30 +75,27 @@ abstract class AbstractEasyTask extends DefaultTask {
 
     void initRestClient() {
         restClient = new RESTClient(this.easyApiBaseUrl)
-        restClient.headers['accept'] = 'application/json'
+        restClient.headers.'accept' = 'application/json'
 
-        restClient.headers['X-API-KEY'] = this.easyApiKey
+        restClient.headers.'x-api-key' = this.easyApiKey
+        if (project.properties.containsKey("sap.commerce.easy.api.key.client")) {
+            restClient.headers.'client' = project.properties.get("sap.commerce.easy.api.key.client")
+        }
         restClient.ignoreSSLIssues()
 
-        restClient.handler.failure = { response, data ->
-            if (response.status == 404) {
-                println("Easy API is not available. Please install Easy API to work with gradle plugin")
-            } else {
-                println "API execution failed. HTTP status: $response.status"
-                def jsonData = JsonOutput.toJson(data)
-                def prettyData = JsonOutput.prettyPrint(jsonData)
-                println prettyData
-            }
+    }
+
+    protected static void printResponse(def res) {
+        def response = res as HttpResponseDecorator
+        if (response.status == 200) {
+            println 'API executed successfully.'
+            def mapper = new ObjectMapper()
+            println "Response is: ${mapper.writerWithDefaultPrettyPrinter().writeValueAsString(response.data)}"
+        } else if (response.status == 404) {
+            throw new GradleException("API not available. Please install [easyapi] easy extension from [easy-extension-samples] repository.")
+        } else {
+            throw new GradleException("API execution failed. ${response.data}")
         }
-
-        restClient.handler.success = { response, data ->
-            println "API executed successfully. HTTP status: $response.status"
-            def jsonData = JsonOutput.toJson(data)
-            def prettyData = JsonOutput.prettyPrint(jsonData)
-            println prettyData
-
-        }
-
     }
 
 }
