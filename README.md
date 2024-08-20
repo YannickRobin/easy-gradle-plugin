@@ -32,7 +32,7 @@ Execute the following pre-requisites:
   sap.commerce.easy.rest.base.url=https://localhost:9002/easyrest
   # The base url of the easy api for your SAP Commerce Cloud. Below if for a local SAP Commerce Cloud Server
   sap.commerce.easy.api.base.url=https://localhost:9002/easyrest/easyapi
-  # Value of easy.apiKey property configured in SAP Commerce Cloud (by default, this is 123456)
+  # Value of easy.apiKey property configured in SAP Commerce Cloud. Refer to the documentation for the API Key generation at 
   sap.commerce.easy.api.key=123456
   # Path to the hybris home directory on your computer to add SAP Commerce Cloud libraries to your extension
   sap.commerce.easy.platform.home=<SAP COMMERCE HOME>
@@ -57,7 +57,7 @@ In this example, we will create an Easy local repository `easy-repo-local` that 
 - Copy the following content into `build.gradle`
     ```groovy
     plugins {
-        id "io.github.yannickrobin.easy-gradle-plugin" version "0.0.5"
+        id "io.github.yannickrobin.easy-gradle-plugin" version "0.0.6"
     }
     ```
 - Create file `gradle.properties` in `easy-repo-local` directory with following content
@@ -141,6 +141,9 @@ Generated new easy extension [helloworld] in current directory
     ```
 
 ## Install Extension
+An Easy Extension can have the following options for installation
+### Regular Installation or Upgrade to a new version of Easy Extension
+ For regular installation using the plugin:
 - Update the repository as described above
 - Run the command `./gradlew :helloworld:easy-ext-install` to install `helloworld` extension of the repository from the repository directory
 - Alternatively, you can execute `./gradlew easy-ext-install` from the easy extension directory
@@ -155,6 +158,103 @@ Generated new easy extension [helloworld] in current directory
   BUILD SUCCESSFUL in 3s
   1 actionable task: 1 executed
   ```
+### Installation with install configuration
+For the extensions where a configuration schema is defined for installation to accept some parameterized configurations for installation, there are following options available:
+#### Provide configuration as commandline argument
+- Update the repository as described above
+- Run the following command to install `helloworld` extension of the repository from the repository directory with configuration at command line:
+  ```gradle 
+  ./gradlew :helloworld:easy-ext-install --configuration "{\"greetingTemplate\": \"Hello {name}!\"}"
+  ```
+- Alternatively, you can execute the following command from the easy extension directory:
+  ```gradle 
+  ./gradlew easy-ext-install --configuration "{\"greetingTemplate\": \"Hello {name}!\"}"
+  ```
+- Following will be the output of the command execution:
+  ```
+  > Task :easy-ext-install
+  API executed successfully. HTTP status: 200
+  {
+  "eventId": "00000002",
+  "message": "Installation request for extension helloworld submitted."
+  }
+  
+  BUILD SUCCESSFUL in 3s
+  1 actionable task: 1 executed
+  ```
+#### Add the configuration file as Extension Resource
+- Add a `json` file named `install-config.json` at `<YOUR EASY EXTENSION DIR>/src/main/resources/` with the configuration in `json` format. For example:
+  ```json
+    {
+      "greetingTemplate": "Hello {name}!"
+    } 
+  ```
+- Update the repository as described above
+- Run the following command to install `helloworld` extension of the repository from the repository directory with configuration at command line:
+  ```gradle 
+  ./gradlew :helloworld:easy-ext-install
+  ```
+- Alternatively, you can execute the following command from the easy extension directory:
+  ```gradle 
+  ./gradlew easy-ext-install
+  ```
+- Following will be the output of the command execution:
+  ```
+  > Task :easy-ext-install
+  API executed successfully. HTTP status: 200
+  {
+  "eventId": "00000002",
+  "message": "Installation request for extension helloworld submitted."
+  }
+  
+  BUILD SUCCESSFUL in 3s
+  1 actionable task: 1 executed
+  ```
+#### Provide the configuration file path as commandline argument
+- Add a `json` file at some disk path. For example: `/opt/helloworld/config.json`
+  ```json
+    {
+      "greetingTemplate": "Hello {name}!"
+    } 
+  ```
+- Update the repository as described above
+- Run the following command to install `helloworld` extension of the repository from the repository directory with configuration at command line:
+  ```gradle 
+  ./gradlew :helloworld:easy-ext-install --configurationPath /opt/helloworld/config.json
+  ```
+- Alternatively, you can execute the following command from the easy extension directory:
+  ```gradle 
+  ./gradlew easy-ext-install
+  ```
+- Following will be the output of the command execution:
+  ```
+  > Task :easy-ext-install
+  API executed successfully. HTTP status: 200
+  {
+  "eventId": "00000002",
+  "message": "Installation request for extension helloworld submitted."
+  }
+  
+  BUILD SUCCESSFUL in 3s
+  1 actionable task: 1 executed
+  ```
+#### Use the configuration from the Easy Extension Item at your SAP Commerce Cloud installation
+- Update the repository as described above
+- Run the command `./gradlew :helloworld:easy-ext-install` to install `helloworld` extension of the repository from the repository directory
+- Alternatively, you can execute `./gradlew easy-ext-install` from the easy extension directory
+  ```
+  > Task :easy-ext-install
+  API executed successfully. HTTP status: 200
+  {
+  "eventId": "00000002",
+  "message": "Installation request for extension helloworld submitted."
+  }
+  
+  BUILD SUCCESSFUL in 3s
+  1 actionable task: 1 executed
+  ```
+
+
 
 ## Update Extension
 - Run the command `./gradlew :helloworld:easy-ext-reinstall` to reinstall/reload/update `helloworld` extension of the repository
@@ -294,8 +394,3 @@ BUILD SUCCESSFUL in 2s
     easy-update-repo - Updates the repository from remote location
 
   ```
-
-
-```
-gradle easy-ext-install --configuration "{\"storeUid\": \"groceryIN\", \"storeName\": \"Indian Grocery\", \"storeHiName\": \"भारतीय किराना\"}"
-```
