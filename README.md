@@ -294,3 +294,8 @@ BUILD SUCCESSFUL in 2s
     easy-update-repo - Updates the repository from remote location
 
   ```
+
+
+```
+gradle easy-ext-install --configuration "{\"storeUid\": \"groceryIN\", \"storeName\": \"Indian Grocery\", \"storeHiName\": \"भारतीय किराना\"}"
+```
