@@ -101,18 +101,22 @@ class GenerateModelClassesTask extends AbstractEasyExtensionTask {
             }
             String enumClassPackage = "${this.getBasePackage()}.enums"
             this.getEasyTypes().enumtypes.each {
-                logger.info("Generating enumeration class for enum type: $it.code")
-                if (enumsDirectory.exists()) {
-                    File targetFile = Path.of(enumsDirectory.absolutePath, "${it.code}.groovy").toFile()
-                    logger.info("Created enums class: $targetFile")
-                    if (targetFile.exists()) {
-                        targetFile.createNewFile()
+                if (it.generate) {
+                    logger.info("Generating enumeration class for enum type: $it.code")
+                    if (enumsDirectory.exists()) {
+                        File targetFile = Path.of(enumsDirectory.absolutePath, "${it.code}.groovy").toFile()
+                        logger.info("Created enums class: $targetFile")
+                        if (targetFile.exists()) {
+                            targetFile.createNewFile()
+                        }
+                        targetFile.text = ClassGenerator.generateEnumClass(it, enumClassPackage)
+                    } else {
+                        throw new GroovyException("enums package doesn't exist")
                     }
-                    targetFile.text = ClassGenerator.generateEnumClass(it, enumClassPackage)
+                    logger.info("Generated enumeration class for enum type: $it.code")
                 } else {
-                    throw new GroovyException("enums package doesn't exist")
+                    logger.info("Generate is false for enum type: $it.code")
                 }
-                logger.info("Generated enumeration class for enum type: $it.code")
             }
         }
         logger.info("Generated enumeration classes")
@@ -130,18 +134,22 @@ class GenerateModelClassesTask extends AbstractEasyExtensionTask {
             }
             String modelClassPackage = "${this.getBasePackage()}.models"
             this.getEasyTypes().itemtypes.each {
-                logger.info("Generating model class for item type: $it.code")
-                if (modelsDirectory.exists()) {
-                    File targetFile = Path.of(modelsDirectory.absolutePath, "${it.modelClassName}.groovy").toFile()
-                    logger.info("Created model class: $targetFile")
-                    if (!targetFile.exists()) {
-                        targetFile.createNewFile()
+                if (it.generate) {
+                    logger.info("Generating model class for item type: $it.code")
+                    if (modelsDirectory.exists()) {
+                        File targetFile = Path.of(modelsDirectory.absolutePath, "${it.modelClassName}.groovy").toFile()
+                        logger.info("Created model class: $targetFile")
+                        if (!targetFile.exists()) {
+                            targetFile.createNewFile()
+                        }
+                        targetFile.text = ClassGenerator.generateModelClass(it, modelClassPackage)
+                    } else {
+                        throw new GroovyException("models package doesn't exist")
                     }
-                    targetFile.text = ClassGenerator.generateModelClass(it, modelClassPackage)
+                    logger.info("Generated model class for item type: $it.code")
                 } else {
-                    throw new GroovyException("models package doesn't exist")
+                    logger.info("Generate is false for item type: $it.code")
                 }
-                logger.info("Generated model class for item type: $it.code")
             }
         }
         logger.info("Generated enumeration classes")

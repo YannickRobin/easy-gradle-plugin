@@ -3,6 +3,7 @@ package com.sap.cx.boosters.easy.gradleplugin.data
 class AttributeType {
     String qualifier
     List<LocalizedString> name
+    List<LocalizedString> description
     String type
     String typeClass
     List<String> typeClassArguments
@@ -27,6 +28,14 @@ class AttributeType {
 
     void setName(List<LocalizedString> name) {
         this.name = name
+    }
+
+    List<LocalizedString> getDescription() {
+        return description
+    }
+
+    void setDescription(List<LocalizedString> description) {
+        this.description = description
     }
 
     String getType() {

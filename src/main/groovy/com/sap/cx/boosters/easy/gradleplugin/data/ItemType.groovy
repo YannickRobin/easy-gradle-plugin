@@ -3,6 +3,7 @@ package com.sap.cx.boosters.easy.gradleplugin.data
 class ItemType {
     String code
     List<LocalizedString> name
+    List<LocalizedString> description
     boolean autocreate = true
     boolean generate = true
     String superType = 'GenericItem'
@@ -29,6 +30,14 @@ class ItemType {
 
     void setName(List<LocalizedString> name) {
         this.name = name
+    }
+
+    List<LocalizedString> getDescription() {
+        return description
+    }
+
+    void setDescription(List<LocalizedString> description) {
+        this.description = description
     }
 
     boolean getAutocreate() {

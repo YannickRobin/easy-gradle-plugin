@@ -5,7 +5,8 @@ import com.sap.cx.boosters.easy.gradleplugin.enums.CollectionTypeEnum
 
 class RelationElementType {
     String qualifier
-    Map<String, String> name
+    List<LocalizedString> name
+    List<LocalizedString> description
     String type
     CardinalityTypeEnum cardinality
     CollectionTypeEnum collectiontype
@@ -22,12 +23,20 @@ class RelationElementType {
         this.qualifier = qualifier
     }
 
-    Map<String, String> getName() {
+    List<LocalizedString> getName() {
         return name
     }
 
-    void setName(Map<String, String> name) {
+    void setName(List<LocalizedString> name) {
         this.name = name
+    }
+
+    List<LocalizedString> getDescription() {
+        return description
+    }
+
+    void setDescription(List<LocalizedString> description) {
+        this.description = description
     }
 
     String getType() {
