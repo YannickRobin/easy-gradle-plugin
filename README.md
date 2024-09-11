@@ -22,7 +22,7 @@ Execute the following pre-requisites:
   ```
 - Install SAP Commerce Cloud 22.11.0 or higher
 - Setup [Easy Extension Framework 0.3](https://sap.github.io/easy-extension-framework/getting-started/) 
-- Install [Gradle](https://gradle.org/install/) version 8.8 or higher
+- Install [Gradle](https://gradle.org/install/) version 8.8
 - Create your global gradle configuration properties file:
   - Unix/MacOS - `~/.gradle/gradle.properties`
   - Windows - `<WINDOWS_DRIVE>:\Users\<USER_NAME>\.gradle\gradle.properties`
@@ -57,7 +57,7 @@ In this example, we will create an Easy local repository `easy-repo-local` that 
 - Copy the following content into `build.gradle`
     ```groovy
     plugins {
-        id "io.github.yannickrobin.easy-gradle-plugin" version "0.0.6"
+        id "io.github.yannickrobin.easy-gradle-plugin" version "0.0.7"
     }
     ```
 - Create file `gradle.properties` in `easy-repo-local` directory with following content
