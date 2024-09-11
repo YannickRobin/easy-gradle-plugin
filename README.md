@@ -68,7 +68,7 @@ In this example, we will create an Easy local repository `easy-repo-local` that 
     # The value of code attribute of the easy repository configured in your SAP Commerce Cloud instance
     sap.commerce.easy.repository.code=easy-repo-local
     ```
- - Alternatively, you can create your repository on GitHub by clicking [Here](https://github.com/new?template_name=easy-repository-template&template_owner=apanwar&name=easy-repo-local&description=easy-repo-local)
+ - Alternatively, you can create your repository on GitHub by clicking [Here](https://github.com/new?template_name=easy-repository-template&template_owner=apanwar&name=easy-repo-local&description=easy-repo-local) and updating the `rootProject.name` property in `settings.gradle` and `sap.commerce.easy.repository.code` property in `gradle.properties`
 ## Generate an Easy Extension
 In this example, we will generate an easy extension `helloworld` in local repository `easy-repo-local`:
 - Run the command `./gradlew easy-ext-gen`
