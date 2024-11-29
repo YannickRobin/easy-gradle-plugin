@@ -1,5 +1,6 @@
 package com.sap.cx.boosters.easy.gradleplugin.plugin
 
+
 import com.sap.cx.boosters.easy.gradleplugin.tasks.*
 import com.sap.cx.boosters.easy.gradleplugin.util.CommerceExtensionUtil
 import org.gradle.api.JavaVersion
@@ -51,6 +52,11 @@ class EasyPlugin implements Plugin<Project> {
         project.tasks.withType(Test).configureEach {
             doFirst {
                 systemProperty 'easyRestBaseUrl', "${project.properties['sap.commerce.easy.rest.base.url']}"
+                systemProperty 'easyApiBaseUrl', "${project.properties['sap.commerce.easy.api.base.url']}"
+                systemProperty 'easyApiKey', "${project.properties['sap.commerce.easy.api.key']}"
+                systemProperty 'repositoryCode', "${project.properties['sap.commerce.easy.repository.code']}"
+                systemProperty 'extensionId', "${project.properties['sap.commerce.easy.extension.id']}"
+                systemProperty 'apiKeyClient', "${project.properties['sap.commerce.easy.api.key.client']}"
             }
             useJUnitPlatform()
             afterTest { desc, result ->

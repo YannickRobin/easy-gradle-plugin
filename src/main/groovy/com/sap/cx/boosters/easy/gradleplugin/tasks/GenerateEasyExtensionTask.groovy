@@ -1,6 +1,6 @@
 package com.sap.cx.boosters.easy.gradleplugin.tasks
 
-
+import com.sap.cx.boosters.easy.gradleplugin.constants.EasyGradlePluginConstants
 import com.sap.cx.boosters.easy.gradleplugin.util.ScaffoldingGenerator
 import org.apache.commons.lang3.StringUtils
 import org.codehaus.groovy.GroovyException
@@ -15,7 +15,6 @@ class GenerateEasyExtensionTask extends DefaultTask {
 
     static final String DEFAULT_EASY_EXTENSION_ID = 'helloworld'
     static final String DEFAULT_EASY_BASE_PACKAGE = 'com.mycompany.commerce.easy.extension'
-    static final String DEFAULT_EASY_VERSION = '0.3'
 
     @Input
     @Optional
@@ -94,8 +93,8 @@ class GenerateEasyExtensionTask extends DefaultTask {
             def parameters = [
                     'EASY_REPOSITORY_CODE'         : project.properties.get('sap.commerce.easy.repository.code'),
                     'EASY_GRADLE_PLUGIN_ID'        : plugin.id,
-                    'EASY_GRADLE_PLUGIN_VERSION'   : '0.0.5',
-                    'EASY_VERSION'                 : DEFAULT_EASY_VERSION,
+                    'EASY_GRADLE_PLUGIN_VERSION'   : EasyGradlePluginConstants.PLUGIN_VERSION,
+                    'EASY_VERSION'                 : EasyGradlePluginConstants.DEFAULT_EASY_VERSION,
                     'EASY_EXTENSION_ID'            : this.extensionId,
                     'EASY_EXTENSION_BASE_PACKAGE'  : this.basePackage,
                     'EASY_EXTENSION_PACKAGE_NAME'  : easyExtensionPackageName,
