@@ -27,8 +27,8 @@ class EasyPlugin implements Plugin<Project> {
             project.sourceSets.test.groovy.srcDirs += 'gensrc/test/groovy'
         }
 
-        project.extensions.findByType(JavaPluginExtension).sourceCompatibility = JavaVersion.VERSION_17
-        project.extensions.findByType(JavaPluginExtension).targetCompatibility = JavaVersion.VERSION_17
+        project.extensions.findByType(JavaPluginExtension).sourceCompatibility = JavaVersion.VERSION_21
+        project.extensions.findByType(JavaPluginExtension).targetCompatibility = JavaVersion.VERSION_21
 
         project.repositories {
             mavenLocal()
